@@ -32,8 +32,12 @@ const Settings = () => {
     setResponseDebug(null);
 
     const formData = new FormData();
-    formData.append("file", File);
-    
+    formData.append("file");
+
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+    console.log('Datos enviados:', formData.get("file"));
     console.log('Datos enviados:', formData);
 
     
@@ -41,7 +45,7 @@ const Settings = () => {
     try {
       // Realizamos la petición POST con axios y enviamos el token en los headers
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}api/upload-inventory`,
+        import.meta.env.VITE_BACKEND_URL + "api/upload-inventory",
         formData,
         
         {
@@ -55,7 +59,7 @@ const Settings = () => {
           withCredentials: true, 
         }
       );
-      console.log("VITE_BACKEND_URL:", import.meta.env.VITE_BACKEND_URL);
+    
       // Mostrar los detalles de la respuesta
       setResponseDebug({
         status: response.status,
