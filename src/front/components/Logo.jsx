@@ -17,7 +17,7 @@ const LogoFrame = () => {
 
     const handleImageUpload = async (event) => {
         const file = event.target.files[0];
-        
+
         if (file) {
             // Mostrar el estado de carga
             setLoading(true);
@@ -35,7 +35,7 @@ const LogoFrame = () => {
 
                 try {
                     const response = await axios.post(
-                        import.meta.env.VITE_BACKEND_URL + 'api/post_logos', 
+                        import.meta.env.VITE_BACKEND_URL + 'api/post_logos',
                         formData,
                         {
                             withCredentials: true,

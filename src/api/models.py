@@ -12,6 +12,8 @@ class User(db.Model):
     lastname: Mapped[str] = mapped_column(String(120), nullable=True)
     shopname: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=True)
+    image_logo_url: Mapped[str] = mapped_column(
+        String(500), nullable=True, default="https://placehold.co/600x400/EEE/31343C")
     email: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
     

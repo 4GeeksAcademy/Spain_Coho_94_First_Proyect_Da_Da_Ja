@@ -10,9 +10,17 @@ const Settings = () => {
   // Obtenemos el token de localStorage para enviarlo con la solicitud
   const token = localStorage.getItem('token');
 
-  // Maneja el cambio del archivo seleccionado
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      // Validar si el archivo es un Excel
+      const allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+      if (!allowedTypes.includes(selectedFile.type)) {
+        alert("El archivo debe ser un archivo Excel (.xlsx o .xls)");
+        return;
+      }
+      setFile(selectedFile);
+    }
   };
 
   // Maneja la carga del archivo
@@ -24,24 +32,30 @@ const Settings = () => {
     setResponseDebug(null);
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", File);
+    
+    console.log('Datos enviados:', formData);
+
+    
 
     try {
       // Realizamos la petición POST con axios y enviamos el token en los headers
       const response = await axios.post(
-        import.meta.env.VITE_BACKEND_URL + "upload-inventory", // Asegúrate de que esta URL sea correcta
+        `${import.meta.env.VITE_BACKEND_URL}api/upload-inventory`,
         formData,
+        
         {
           headers: {
             "Accept": "application/json",
             "Content-Type": "multipart/form-data",
+            "Authorization": `Bearer ${token}`
           },
 
           // El navegador se encargará de enviarlo automáticamente con cada solicitud si el token está en las cookies
           withCredentials: true, 
         }
       );
-
+      console.log("VITE_BACKEND_URL:", import.meta.env.VITE_BACKEND_URL);
       // Mostrar los detalles de la respuesta
       setResponseDebug({
         status: response.status,

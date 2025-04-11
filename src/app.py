@@ -3,7 +3,7 @@ import datetime
 from flask import Flask, jsonify, send_from_directory
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS  # IMPORTA CORS
+from flask_cors import CORS  
 from api.upload_routes import upload 
 
 # IMPORTACIONES DEL PROYECTO
@@ -17,8 +17,9 @@ from api.commands import setup_commands
 
 # CREAR LA INSTANCIA DE LA APLICACIÓN FLASK
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
+app.config['JWT_SECRET_KEY'] = 'YananiCordobaBueno'
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(upload, url_prefix='/api')
 

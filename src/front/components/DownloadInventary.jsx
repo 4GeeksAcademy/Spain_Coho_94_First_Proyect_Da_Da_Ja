@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-export default function DownloadExcelButton() {
+ function DownloadExcelButton() {
   const handleDownload = async () => {
     try {
       const response = await axios.get("https://fluffy-space-spoon-v6q9vgr5vqjx2w5vx-3001.app.github.dev/download-excel", {
@@ -27,11 +27,11 @@ export default function DownloadExcelButton() {
   return (
     <div className="p-4">
       
-  
     <button onClick={handleDownload} className="p-2 bg-blue-500 text-white rounded">
       Download
     </button>
     </div>
   );
-  
 }
+
+export default DownloadExcelButton;

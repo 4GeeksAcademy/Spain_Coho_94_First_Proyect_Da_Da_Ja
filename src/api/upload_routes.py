@@ -43,40 +43,38 @@ def handle_hello():
 @jwt_required()
 def upload_inventory():
 
-    """
-    Maneja la subida de archivos Excel:
-    1. Guarda el archivo original en Tigris S3
-    2. Procesa el contenido y lo guarda en la tabla Productos
-    3. Guarda la URL de Tigris en la tabla TigrisFiles
-    """
-    # Obtener el ID del usuario del token JWT
-    user_id = get_jwt_identity()
+    # Obtener la identidad del usuario (presumiblemente un diccionario con su información)
+    current_user = get_jwt_identity()
+    
+    # Verificar si 'current_user' es un diccionario, y si es así, extraer el 'id' correctamente
+    current_user_id = current_user['id'] if isinstance(current_user, dict) else current_user
 
+    # Comprobar que el archivo esté en la solicitud
     if "file" not in request.files:
         return jsonify({"error": "No se encontró archivo en la solicitud"}), 400
 
     # Verificar que el usuario exista
-    user = User.query.get(user_id)
+    user = User.query.get(current_user_id)  # Usar current_user_id en lugar de user_id
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
+    # Guardar el archivo y continuar con el procesamiento
     file = request.files["file"]
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(file_path)
     
-
     try:
-        # 1. Subir el archivo original a Tigris S3
+        # Subir el archivo original a Tigris S3
         file_url = upload_to_tigris_s3(file_path, file.filename)
 
-        # 2. Procesar el Excel y guardar en la base de datos
+        # Procesar el Excel y guardar en la base de datos
         df = pd.read_excel(file_path)
 
-        # Verificar que el Excel tiene las columnas esperadas
-        required_columns = ['nombre_del_producto',
-                            'precio_por_unidad', 'descripción', 'unidades']
+        # Verificar que el Excel tenga las columnas esperadas
+        required_columns = ['nombre_del_producto', 'precio_por_unidad', 'descripción', 'unidades']
         for col in required_columns:
             if col not in df.columns:
+                print(df.columns)
                 return jsonify({"error": f"Falta la columna '{col}' en el archivo Excel"}), 400
 
         # Normalizar nombres de columnas
@@ -88,21 +86,20 @@ def upload_inventory():
         # Guardar cada producto en la base de datos
         products_added = 0
         for record in records:
-            # Mapear campos del Excel al modelo con los nuevos nombres
             new_product = Productos(
                 product_name=record['nombre_del_producto'],
                 price_per_unit=record['precio_por_unidad'],
                 description=record['descripción'],
                 quantity=record['unidades'],
-                user_id=user_id  # ID del usuario obtenido del token
+                user_id=current_user_id  # Usar current_user_id en lugar de user_id
             )
             db.session.add(new_product)
             products_added += 1
 
-        # 3. Guardar la URL de Tigris en la tabla TigrisFiles
+        # Guardar la URL del archivo en la tabla TigrisFiles
         new_tigris_file = TigrisFiles(
             url=file_url,
-            user_id=user_id  # ID del usuario obtenido del token
+            user_id=current_user_id  # Usar current_user_id en lugar de user_id
         )
         db.session.add(new_tigris_file)
 
@@ -119,11 +116,11 @@ def upload_inventory():
         })
 
     except Exception as e:
-        # En caso de error, hacer rollback
         db.session.rollback()
         if os.path.exists(file_path):
             os.remove(file_path)
         return jsonify({"error": str(e)}), 500
+
 
 # Función auxiliar para subir archivos a Tigris S3
 
