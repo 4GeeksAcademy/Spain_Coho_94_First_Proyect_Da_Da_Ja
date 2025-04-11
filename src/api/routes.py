@@ -198,28 +198,6 @@ def get_user_info():
         "name": user.serialize()["username"]
     }), 200
 
-# Borrar un usuario existente
-@api.route('/settings/<int:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    # Buscamos al usuario por ID
-    user = User.query.get(user_id)
-
-    # Verificar si el usuario existe
-    if not user:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    # Si sale error al eliminar usuario, hacemos try/except
-    try:
-        # Eliminamos el usuario de la base de datos
-        db.session.delete(user)
-        db.session.commit()
-
-        # Devolver mensaje de éxito
-        return jsonify({"message": f"Usuario {user_id} eliminado correctamente"}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': f"Error al eliminar el usuario: {str(e)}"}), 500
-
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -305,3 +283,103 @@ def get_logo():
         return send_from_directory(os.path.dirname(logo_path), os.path.basename(logo_path))
     except Exception as e:
         return jsonify({"message": f"Error serving logo: {str(e)}"}), 500
+    
+#
+# --- USUARIO ---
+# Muestra todos los usuarios
+#
+@api.route('/users', methods=['GET'])
+def get_all_users():
+
+    users = User.query.all()
+
+    if not users:
+        return jsonify({ "msg": "Users not found"}), 404
+    
+    response_body = [user.serialize() for user in users]
+
+    return jsonify(response_body), 200
+
+#
+# Muestra los datos de un usuario
+#
+@api.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+
+    user = User.query.get(user_id)
+
+    if user is None:
+        return jsonify({ "msg": "User not found"}), 404
+    
+    response_body = user.serialize()
+    
+    return jsonify(response_body), 200
+
+
+#
+# Actualizar un usuario existente
+#
+@api.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    # Buscamos al usuaruio por su ID
+    user = User.query.get(user_id)
+
+    # Verificamos si el usuario existe
+    if not user:
+        return jsonify({"error": "Usuario no encontrada"}), 404
+    
+    # Obtenemos los datos de la request
+    request_data = request.get_json()
+
+    # Actualizamos los campos si estan presentes en la solicitud
+    if "firstname" in request_data:
+        user.firstname = request_data['firstname']
+    
+    if "lastname" in request_data:
+        user.lastname = request_data['lastname']
+
+    if "shopname" in request_data:
+        user.shopname = request_data['shopname']
+
+    if "email" in request_data:
+        user.email = request_data['email']
+
+    if "password" in request_data:
+        user.password = request_data['password']
+
+    # Si sale error al actualizar especie, hacemos try/except
+    try:
+        # Guardamos los cambios en la base de datos
+        db.session.commit()
+
+        # Devolvemos (retornamos) la especie actualizada
+        return jsonify(user.serialize()), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al actualizar el usuario: {str(e)}"}), 500
+
+#
+# Borra un usuario
+#
+@api.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    # Buscamos al usuario por ID
+    user = User.query.get(user_id)
+
+    # Verificar si el usuario existe
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    # Si sale error al eliminar usuario, hacemos try/except
+    try:
+        # Eliminamos el usuario de la base de datos
+        db.session.delete(user)
+        db.session.commit()
+
+        # Devolver mensaje de exito
+        return jsonify({"message": f"Usuario {user_id} eliminado correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al eliminar el usuario: {str(e)}"}), 500
+    
