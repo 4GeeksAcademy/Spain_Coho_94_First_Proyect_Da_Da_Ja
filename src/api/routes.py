@@ -1,21 +1,22 @@
-from flask import request, jsonify, url_for, Blueprint
+from flask import request, jsonify, url_for, Blueprint, session
 from api.models import db, User, Logo
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask import send_from_directory
 from api.upload_routes import upload
+import os
+import random
+import string
+import time
+from werkzeug.utils import secure_filename  # Línea 9
 
 api = Blueprint('api', __name__)
-
-
-# REGISTRO DEL BLUEPRINT UPLOAD:
-api.register_blueprint(upload, url_prefix='/upload')
 
 
 @api.route('/home')
 def sitemap():
     return generate_sitemap(api)
-
 
 @api.route('/', methods=['POST', 'GET'])
 def handle_hello():
@@ -24,21 +25,68 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-# ENDPOINT PARA GENERAR USUARIO ANÓNIMO
-
-
+# Endpoint para generar usuario anónimo
 @api.route('/anonymous/create', methods=['POST'])
 def create_user_anonymous():
-    # VERIFICAR SI EXISTE UN TOKEN
     existing_token = request.cookies.get('anonymousToken')
 
     if existing_token:
         return jsonify({
             'message': "El usuario anónimo ya existe",
-            'isNew': False
+            'isNew': False,
+            
+        }), 200
+
+    # Crear usuario anónimo con un email temporal y una contraseña aleatoria
+   
+    timestamp = int(time.time())
+    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    temp_email = f"anonymous_{timestamp}_{random_suffix}@temp.com"
+    temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+
+    # Crear el usuario anónimo
+    anonymous_user = User(
+        email=temp_email,
+        password=temp_password,  # Se encriptará automáticamente gracias al setter
+        shopname="Anonymous Shop",
+        is_active=True
+    )
+
+    try:
+        db.session.add(anonymous_user)
+        db.session.commit()
+
+        # Crear un logo por defecto para el usuario anónimo
+        logo = Logo(user_id=anonymous_user.id)
+        db.session.add(logo)
+        db.session.commit()
+
+        # Generar token para el usuario anónimo
+        token_data = {
+            "id": anonymous_user.id,
+            "email": anonymous_user.email,
+            "is_anonymous": True
+        }
+        anonymous_token = create_access_token(identity=token_data)
+
+        # Preparar respuesta (en una aplicación real, establecerías el token como cookie)
+        response = jsonify({
+            'message': "Usuario anónimo creado exitosamente",
+            'isNew': True,
+            'token': anonymous_token,
+            'user': anonymous_user.serialize()
         })
 
-# RUTA PARA REGISTRARSE UN USUARIO (SIGNUP)
+        # Establecer la cookie con el token anónimo
+        response.set_cookie('anonymousToken', anonymous_token, max_age=86400*30, secure=True, httponly=True, samesite='Strict')  # Línea 48
+
+        return response, 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al crear usuario anónimo: {str(e)}"}), 500
+
+# Ruta para registrarse un usuario y loguearse automáticamente (signup)
 
 @api.route('/signup', methods=['POST'])
 def create_user():
@@ -49,26 +97,27 @@ def create_user():
     email = body.get('email')
     password = body.get('password')
 
-    # VERIFICA SI NO EXISTEN LOS CAMPOS
+    # Verifica si no existen los campos
     if not firstname or not lastname or not email or not password or not shopname:
         return jsonify({"msg": "Todos los campos son obligatorios"}), 400
 
-    # VERIFICA SI EL USUARIO EXISTE
+    # Verifica si el usuario existe
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
         return jsonify({"msg": "El usuario ya existe"}), 403
 
     try:
-        # ENCRIPTAMOS LA CONTRASEÑA ANTES DE GUARDARLA
+        # Encriptamos la contraseña antes de guardarla
         hashed_password = User.hash_password(password)
 
-        # CREAMOS EL NUEVO USUARIO
+        # Creamos el nuevo usuario
         new_user = User(
             firstname=firstname,
             lastname=lastname,
             shopname=shopname,
             email=email,
-            password=hashed_password,  # Contraseña encriptada
+            password=hashed_password,
+            logo = Logo(new_user.id),  
             is_active=True  # Asumiendo que el usuario está activo por defecto
         )
 
@@ -76,7 +125,7 @@ def create_user():
         db.session.flush()
         db.session.commit()
 
-        # CREAMOS EL TOKEN DE ACCESO
+        # Creamos el token de acceso
         access_token = create_access_token(identity=new_user.id)
 
         return jsonify({
@@ -89,39 +138,59 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": f"Ocurrió un error al crear el usuario: {str(e)}"}), 500
 
-# RUTA PARA LOGEARSE Y CREACIÓN DE TOKEN
+# Ruta para logearse y creación de token
 
 @api.route('/login', methods=['POST'])
 def login():
-    body = request.get_json()
-    email = body.get("email")
-    password = body.get("password")
+    try:
+        body = request.get_json()
+        if not body:
+            return jsonify({"error": "No se proporcionaron datos"}), 400
+            
+        email = body.get("email")
+        password = body.get("password")
 
-    if not body or not email or not password:
-        return jsonify({"error": "Email y password son requeridos"}), 400
+        if not email or not password:
+            return jsonify({"error": "Email y password son requeridos"}), 400
 
-    user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
 
-    if not user:
-        return jsonify({"error": "email incorrecto"}), 401
+        if not user:
+            return jsonify({"error": "usuario incorrecto"}), 401
 
-    if not user.check_password(password):
-        return jsonify({"error": "password incorrecto"}), 401
+        if not user.check_password(password):
+            return jsonify({"error": "password incorrecto"}), 401
 
-    access_token = create_access_token(identity=str(user.id))
+        # Crear token con información del usuario (incluyendo URL del logo si existe)
+        user_data = user.serialize()
+        
+        # Obtener logo si existe
+        logo = Logo.query.filter_by(user_id=user.id).first()
+        logo_url = logo.image_logo_url if logo else None
+        
+        # Incluir información en el token
+        token_data = {
+            "id": user.id,
+            "email": user.email,
+            "logo_url": logo_url
+        }
+        
+        access_token = create_access_token(identity=token_data)
 
-    return jsonify({
-        "access_token": access_token,
-        "user": user.serialize()
-    }), 200
+        return jsonify({
+            "access_token": access_token,
+            "user": user_data,
+            "logo_url": logo_url
 
-# RUTA DEL ACCESO SETTINGS DEL USUARIO
-
-
+        }), 200
+    except Exception as e:
+        return jsonify({"error": f"Error en login: {str(e)}"}), 500
+    
+# Ruta del acceso settings del usuario
 @api.route('/settings', methods=['GET'])
-@jwt_required()  # PRECISA DE TOKEN PARA ACCEDER
+@jwt_required()  # Precisa de token para acceder
 def get_user_info():
-    # DEVUELVE EL ID PORQUE SE LO HE PASADO AL CREAR ACCESS_TOKEN
+    # Devuelve el ID porque se lo he pasado al crear access_token
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -129,149 +198,110 @@ def get_user_info():
         "name": user.serialize()["username"]
     }), 200
 
-# MUESTRA TODOS LOS USUARIOS
-
-@api.route('/users', methods=['GET'])
-def get_all_users():
-
-    users = User.query.all()
-
-    if not users:
-        return jsonify({ "msg": "Users not found"}), 404
-    
-    response_body = [user.serialize() for user in users]
-
-    return jsonify(response_body), 200
-  
-# MUESTRA LOS DATOS DEL USUARIO
-
-@api.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-
-    user = User.query.get(user_id)
-
-    if user is None:
-        return jsonify({ "msg": "User not found"}), 404
-    
-    response_body = user.serialize()
-    
-    return jsonify(response_body), 200
-  
-# ACTUALIZAR UN USUARIO EXISTENTE
-
-@api.route('/users/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    # Buscamos al usuaruio por su ID
-    user = User.query.get(user_id)
-
-    # VERIFICAMOS SI EL USUARIO EXISTE
-    
-    if not user:
-        return jsonify({"error": "Usuario no encontrada"}), 404
-    
-    # OBTENEMOS LOS DATOS DE LA REQUEST
-    
-    request_data = request.get_json()
-
-    
-    # ACTUALIZAMOS LOS CAMPOS SI ESTAN PRESENTES EN LA SOLICITUD
-    
-    if "firstname" in request_data:
-        user.firstname = request_data['firstname']
-    
-    if "lastname" in request_data:
-        user.lastname = request_data['lastname']
-
-    if "shopname" in request_data:
-        user.shopname = request_data['shopname']
-
-    if "email" in request_data:
-        user.email = request_data['email']
-    
-    if "username" in request_data:
-        user.username = request_data['username']
-
-    if "password" in request_data:
-        user.password = request_data['password']
-
-    # SI SALE ERROR AL ACTUALIZAR ESPECIE, HACEMOS TRY/EXCEPT
-    
-    try:
-        # GUARDAMOS LOS CAMBIOS EN LA BASE DE DATOS
-   
-        db.session.commit()
-
-        # DEVOLVEMOS (RETORNAMOS) LA ESPECIE ACTUALIZADA
-      
-        return jsonify(user.serialize()), 200
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': f"Error al actualizar el usuario: {str(e)}"}), 500
-
-
-# BORRA UN USUARIO
-
-@api.route('/users/<int:user_id>', methods=['DELETE'])
+# Borrar un usuario existente
+@api.route('/settings/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-  
-    # BUSCAMOS AL USUARIO POR ID
+    # Buscamos al usuario por ID
     user = User.query.get(user_id)
 
-    # VERIFICAR SI EL USUARIO EXISTE
+    # Verificar si el usuario existe
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
-      
-    # SI SALE ERROR AL ELIMINAR USUARIO, HACEMOS TRY/EXCEPT
 
+    # Si sale error al eliminar usuario, hacemos try/except
     try:
-        # ELIMINAMOS EL USUARIO DE LA BASE DE DATOS
+        # Eliminamos el usuario de la base de datos
         db.session.delete(user)
         db.session.commit()
 
-        # DEVOLVER MENSAJE DE EXITO
+        # Devolver mensaje de éxito
         return jsonify({"message": f"Usuario {user_id} eliminado correctamente"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f"Error al eliminar el usuario: {str(e)}"}), 500
-    
-# LLAMAR AL LOGO DESDE LA API
 
-@api.route("/get_logos", methods=['GET'])
-def get_all_logos():
-    logos = Logo.query.all()
 
-    logos_serialized = [logo.serialize() for logo in logos]
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    return jsonify({"logos": logos_serialized})
 
- # SUBIR EL LOGO DESDE LA API
-
+# Ruta para subir y guardar el logo
 @api.route('/post_logos', methods=['POST'])
-def create_logo():
-    body = request.get_json()
-    image_logo_url = body.get("image_logo_url")
+def post_logos():
+    current_user_id = get_jwt_identity()  # Obtener el id del usuario desde el token JWT
+    
+    # Verificar si el archivo ha sido subido
+    if 'logo' not in request.files:
+        return jsonify({'error': 'No logo provided'}), 400
 
-    # Verifica si no existen los campos
-    if not image_logo_url:
-        return jsonify({"msg": "Asigna un logo"}), 400
+    logo_file = request.files['logo']
+
+    # Verificar si se seleccionó un archivo
+    if logo_file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+
+    # Verificar si el archivo tiene una extensión permitida
+    if not allowed_file(logo_file.filename):
+        return jsonify({'error': 'File type not allowed. Only PNG, JPG, JPEG, GIF are allowed.'}), 400
+
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    # Buscar si ya existe un logo para este usuario
+    logo = Logo.query.filter_by(user_id=current_user_id).first()
+
+    # Definir la ruta donde se guardará el logo
+    logo_filename = secure_filename(logo_file.filename)
+    logo_path = os.path.join('static', 'logos', logo_filename)
+
+    # Asegurarse de que el directorio existe
+    if not os.path.exists(os.path.dirname(logo_path)):
+        os.makedirs(os.path.dirname(logo_path))
+
+    # Guardar el archivo en el servidor
+    try:
+        logo_file.save(logo_path)
+    except Exception as e:
+        return jsonify({"message": f"Error saving the logo: {str(e)}"}), 500
+    
+    # Si ya existe un logo, actualizamos la URL; si no, creamos uno nuevo
+    if logo:
+        logo.image_logo_url = logo_path  # Actualizamos la URL del logo
+    else:
+        new_logo = Logo(image_logo_url=logo_path, user_id=current_user_id)
+        db.session.add(new_logo)
 
     try:
-
-        # CREA EL LOGO
-        new_logo = Logo(
-            image_logo_url=image_logo_url,
-        )
-
-        db.session.add(new_logo)
-        db.session.flush()
         db.session.commit()
-
-        return jsonify({
-            "logo": new_logo.serialize()
-        }), 201
-
+        return jsonify({"message": "Logo updated successfully"}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Ocurrió un error al crear el logo: {str(e)}"}), 500
+        return jsonify({"message": f"Error updating logo: {str(e)}"}), 500
 
+
+# Ruta para obtener el logo de un usuario
+@api.route('/get_logo', methods=['GET'])
+def get_logo():
+    current_user_id = get_jwt_identity()  # Obtener el id del usuario desde el token JWT
+    
+    user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    # Buscar si existe un logo para el usuario
+    logo = Logo.query.filter_by(user_id=current_user_id).first()
+
+    if not logo:
+        return jsonify({"message": "Logo not found"}), 404
+    
+    # Obtener la ruta del logo y devolver la imagen
+    logo_path = logo.image_logo_url
+    
+    # Servir la imagen desde el directorio donde se encuentra
+    try:
+        return send_from_directory(os.path.dirname(logo_path), os.path.basename(logo_path))
+    except Exception as e:
+        return jsonify({"message": f"Error serving logo: {str(e)}"}), 500
