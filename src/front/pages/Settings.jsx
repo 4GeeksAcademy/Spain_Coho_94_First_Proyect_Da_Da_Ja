@@ -32,16 +32,11 @@ const Settings = () => {
     setResponseDebug(null);
 
     const formData = new FormData();
-    formData.append("file");
-
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
-    }
-    console.log('Datos enviados:', formData.get("file"));
+    formData.append("archivo", file);
+    
     console.log('Datos enviados:', formData);
 
     
-
     try {
       // Realizamos la petición POST con axios y enviamos el token en los headers
       const response = await axios.post(
@@ -68,12 +63,12 @@ const Settings = () => {
         data: response.data
       });
 
-      alert(response.data.message); // Mostrar el mensaje de respuesta
+      alert(response.data.message); 
 
     } catch (error) {
       console.error("Error al subir archivo:", error);
 
-      // Manejo de error detallado
+     
       setResponseDebug({
         error: true,
         message: error.message,
@@ -85,7 +80,7 @@ const Settings = () => {
 
       alert("Error al subir archivo: " + (error.response?.data?.error || error.message));
     } finally {
-      setUploading(false); // Terminamos el proceso de carga
+      setUploading(false); 
     }
   };
 

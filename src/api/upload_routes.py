@@ -28,7 +28,6 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-
 @upload.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
     response_body = {
@@ -63,6 +62,8 @@ def upload_inventory():
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(file_path)
     
+    print("HACER ALGO")
+
     try:
         # Subir el archivo original a Tigris S3
         file_url = upload_to_tigris_s3(file_path, file.filename)
@@ -71,7 +72,7 @@ def upload_inventory():
         df = pd.read_excel(file_path)
 
         # Verificar que el Excel tenga las columnas esperadas
-        required_columns = ['nombre_del_producto', 'precio_por_unidad', 'descripción', 'unidades']
+        required_columns = ['nombre_del_producto', 'precio_por_unidad', 'descripcion', 'unidades']
         for col in required_columns:
             if col not in df.columns:
                 print(df.columns)
@@ -89,12 +90,14 @@ def upload_inventory():
             new_product = Productos(
                 product_name=record['nombre_del_producto'],
                 price_per_unit=record['precio_por_unidad'],
-                description=record['descripción'],
+                description=record['descripcion'],
                 quantity=record['unidades'],
                 user_id=current_user_id  # Usar current_user_id en lugar de user_id
             )
             db.session.add(new_product)
             products_added += 1
+
+            print("LLEGO EL ARCHIVO")
 
         # Guardar la URL del archivo en la tabla TigrisFiles
         new_tigris_file = TigrisFiles(
