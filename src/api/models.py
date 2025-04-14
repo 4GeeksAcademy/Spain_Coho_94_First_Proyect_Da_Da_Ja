@@ -1,7 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Column, Integer, Float, Boolean, ForeignKey
+from sqlalchemy import String, Column, Integer, Float, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -76,23 +77,37 @@ class Rol(db.Model):
 # TABLA DE COMPRAS
 class Compras(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120))
+    fecha_compra: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
+    proveedor: Mapped[str] = mapped_column(String(120), nullable=False) # Nombre usuario (firstname)
+    numero_factura: Mapped[str] = mapped_column(String(50), nullable=False)
+    total: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    estado: Mapped[str] = mapped_column(String(20), nullable=False, default="Pendiente") # Pendiente, Recibido, Cancelado
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "fecha_compra": self.fecha_compra,
+            "proveedor": self.proveedor,
+            "numero_factura": self.numero_factura,
+            "total": self.total,
+            "estado": self.estado
         }
 
 # TABLA DE STOCK
 class Stock(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120))
+    ubicacion: Mapped[str] = mapped_column(String(120), nullable=False)
+    capacidad_maxima: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    # Relacion con los productos
+    productos = relationship("Productos", back_populates="stock")
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "ubicacion": self.ubicacion,
+            "capacidad_maxima": self.capacidad_maxima,
+            "productos": [ps.serialize() for ps in self.productos]
         }
 
 # TABLA DE PRODUCTOS
@@ -111,6 +126,10 @@ class Productos(db.Model):
     # AÑADIMOS LA RELACION CON EL USUARIO
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
     user = relationship("User", back_populates="products")
+
+    # Relación con el stock
+    stock_id: Mapped[int] = mapped_column(ForeignKey('stock.id'), nullable=False)
+    stock = relationship("Stock", back_populates="productos")
 
     def serialize(self):
         return {
@@ -142,8 +161,20 @@ class TigrisFiles(db.Model):
 # TABLA DE FACTURAS
 class Facturas(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120))
-    cif_empresa: Mapped[str] = mapped_column(String(50))
+    num_factura: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
+    fecha_emision: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
+    fecha_vencimiento: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    cliente_nombre: Mapped[str] = mapped_column(String(120), nullable=False)
+    cliente_direccion: Mapped[str] = mapped_column(String(350), nullable=True)
+    cliente_email: Mapped[str] = mapped_column(String(120), nullable=True)
+    cliente_telefono: Mapped[str] = mapped_column(String(20), nullable=True)
+    cif_cliente: Mapped[str] = mapped_column(String(50), nullable=True)
+    cif_empresa: Mapped[str] = mapped_column(String(50), nullable=False)
+    subtotal: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    impuestos: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    total: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    estado: Mapped[str] = mapped_column(String(20), nullable=False, default="Pendiente") # Pendiente, Recibido, Cancelado
+    notas: Mapped[str] = mapped_column(String(500), nullable=True)
 
     # RELACION UNO A MUCHOS CON DETALLES_FACTURAS, LA TABLA DE MUCHOS
     id_factura = relationship("Detalles_Facturas", back_populates="factura")
@@ -151,8 +182,20 @@ class Facturas(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
-            "cif_empresa": self.cif_empresa
+            "num_factura": self.num_factura,
+            "fecha_emision": self.fecha_emision.isoformat() if self.fecha_emision else None,
+            "fecha_vencimiento": self.fecha_vencimiento.isoformat() if self.fecha_vencimiento else None,
+            "cliente_nombre": self.cliente_nombre,
+            "cliente_direccion": self.cliente_direccion,
+            "cliente_email": self.cliente_email,
+            "cliente_telefono": self.cliente_telefono,
+            "cif_cliente": self.cif_cliente,
+            "cif_empresa": self.cif_empresa,
+            "subtotal": self.subtotal,
+            "impuestos": self.impuestos,
+            "total": self.total,
+            "estado": self.estado,
+            "notas": self.notas
         }
 
 # TABLA DETALLES_FACTURA (PRODUCTOS - FACTURAS)
