@@ -1,5 +1,5 @@
 from flask import request, jsonify, url_for, Blueprint, session
-from api.models import db, User, Logo
+from api.models import db, User, Logo, Compras, Facturas
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -382,4 +382,229 @@ def delete_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f"Error al eliminar el usuario: {str(e)}"}), 500
+    
+#
+# --- COMPRAS ---
+# Muestra todas las compras
+#
+@api.route('/compras', methods=['GET'])
+def get_all_compras():
+
+    compras = Compras.query.all()
+
+    if not compras:
+        return jsonify({ "msg": "No hay compras"}), 404
+    
+    response_body = [compra.serialize() for compra in compras]
+
+    return jsonify(response_body), 200
+
+#
+# Muestra los datos de una compra
+#
+@api.route('/compras/<int:compra_id>', methods=['GET'])
+def get_compra(compra_id):
+
+    compra = Compras.query.get(compra_id)
+
+    if compra is None:
+        return jsonify({ "msg": "Compra no encontrada"}), 404
+    
+    response_body = compra.serialize()
+    
+    return jsonify(response_body), 200
+
+
+#
+# Actualizar una compra existente
+#
+@api.route('/compras/<int:compra_id>', methods=['PUT'])
+def update_compra(compra_id):
+    # Buscamos la compra por su ID
+    compra = Compras.query.get(compra_id)
+
+    # Verificamos si la compra existe
+    if not compra:
+        return jsonify({"error": "Compra no encontrada"}), 404
+    
+    # Obtenemos los datos de la request
+    request_data = request.get_json()
+
+    # Actualizamos los campos si estan presentes en la solicitud
+    if "fecha_compra" in request_data:
+        compra.fecha_compra = request_data['fecha_compra']
+    
+    if "proveedor" in request_data:
+        compra.proveedor = request_data['proveedor']
+
+    if "numero_factura" in request_data:
+        compra.numero_factura = request_data['numero_factura']
+
+    if "total" in request_data:
+        compra.total = request_data['total']
+
+    if "estado" in request_data:
+        compra.estado = request_data['estado']
+
+    # Si sale error al actualizar especie, hacemos try/except
+    try:
+        # Guardamos los cambios en la base de datos
+        db.session.commit()
+
+        # Devolvemos (retornamos) la especie actualizada
+        return jsonify(compra.serialize()), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al actualizar la compra: {str(e)}"}), 500
+
+#
+# Borrar una compra
+#
+@api.route('/compras/<int:compra_id>', methods=['DELETE'])
+def delete_compra(compra_id):
+    # Buscamos la compra por ID
+    compra = Compras.query.get(compra_id)
+
+    # Verificar si la compra existe
+    if not compra:
+        return jsonify({"error": "Compra no encontrada"}), 404
+    
+    # Si sale error al eliminar compra, hacemos try/except
+    try:
+        # Eliminamos la compra de la base de datos
+        db.session.delete(compra)
+        db.session.commit()
+
+        # Devolver mensaje de exito
+        return jsonify({"message": f"Compra nº{compra_id} eliminado correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al eliminar la compra: {str(e)}"}), 500
+    
+#
+# --- FACTURAS ---
+# Muestra todas las facturas
+#
+@api.route('/facturas', methods=['GET'])
+def get_all_bills():
+
+    bills = Facturas.query.all()
+
+    if not bills:
+        return jsonify({ "msg": "No hay facturas"}), 404
+    
+    response_body = [bill.serialize() for bill in bills]
+
+    return jsonify(response_body), 200
+
+#
+# Muestra los datos de una factura
+#
+@api.route('/facturas/<int:bill_id>', methods=['GET'])
+def get_bill(bill_id):
+
+    bill = Facturas.query.get(bill_id)
+
+    if bill is None:
+        return jsonify({ "msg": "Factura no encontrada"}), 404
+    
+    response_body = bill.serialize()
+    
+    return jsonify(response_body), 200
+
+
+#
+# Actualizar una factura existente
+#
+@api.route('/facturas/<int:bill_id>', methods=['PUT'])
+def update_bill(bill_id):
+    # Buscamos la factura por su ID
+    bill = Facturas.query.get(bill_id)
+
+    # Verificamos si la factura existe
+    if not bill:
+        return jsonify({"error": "Factura no encontrada"}), 404
+    
+    # Obtenemos los datos de la request
+    request_data = request.get_json()
+
+    # Actualizamos los campos si estan presentes en la solicitud
+    if "num_factura" in request_data:
+        bill.num_factura = request_data['num_factura']
+    
+    if "fecha_emision" in request_data:
+        bill.fecha_emision = request_data['fecha_emision']
+
+    if "fecha_vencimiento" in request_data:
+        bill.fecha_vencimiento = request_data['fecha_vencimiento']
+
+    if "cliente_nombre" in request_data:
+        bill.cliente_nombre = request_data['cliente_nombre']
+
+    if "cliente_direccion" in request_data:
+        bill.cliente_direccion = request_data['cliente_direccion']
+
+    if "cliente_email" in request_data:
+        bill.cliente_email = request_data['cliente_email']
+
+    if "cliente_telefono" in request_data:
+        bill.cliente_telefono = request_data['cliente_telefono']
+
+    if "cif_cliente" in request_data:
+        bill.cif_cliente = request_data['cif_cliente']
+
+    if "cif_empresa" in request_data:
+        bill.cif_empresa = request_data['cif_empresa']
+
+    if "subtotal" in request_data:
+        bill.subtotal = request_data['subtotal']
+
+    if "impuestos" in request_data:
+        bill.impuestos = request_data['impuestos']
+
+    if "total" in request_data:
+        bill.total = request_data['total']
+
+    if "estado" in request_data:
+        bill.estado = request_data['estado']
+
+    if "notas" in request_data:
+        bill.notas = request_data['notas']
+
+    # Si sale error al actualizar factura, hacemos try/except
+    try:
+        # Guardamos los cambios en la base de datos
+        db.session.commit()
+
+        # Devolvemos (retornamos) la factura actualizada
+        return jsonify(bill.serialize()), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al actualizar la factura: {str(e)}"}), 500
+
+#
+# Borrar una factura
+#
+@api.route('/facturas/<int:factura_id>', methods=['DELETE'])
+def delete_factura(factura_id):
+    # Buscamos la factura por ID
+    factura = Facturas.query.get(factura_id)
+
+    # Verificar si la factura existe
+    if not factura:
+        return jsonify({"error": "Factura no encontrada"}), 404
+    
+    # Si sale error al eliminar factura, hacemos try/except
+    try:
+        # Eliminamos la factura de la base de datos
+        db.session.delete(factura)
+        db.session.commit()
+
+        # Devolver mensaje de exito
+        return jsonify({"message": f"Factura nª{factura_id} eliminado correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al eliminar la factura: {str(e)}"}), 500
     
