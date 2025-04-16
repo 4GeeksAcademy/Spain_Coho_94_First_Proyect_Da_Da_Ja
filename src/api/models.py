@@ -70,10 +70,10 @@ class Rol(db.Model):
     user = relationship("User", back_populates="roles")
 
     # RELACION COMPRAS
-    # compras = relationship("Compras", back_populates="roles")
+    compras = relationship("Compras", back_populates="roles")
 
     # RELACION FACTURAS
-    # facturas = relationship("Facturas", back_populates="roles")
+    facturas = relationship("Facturas", back_populates="roles")
 
     def serialize(self):
         return {
@@ -93,11 +93,11 @@ class Compras(db.Model):
     estado: Mapped[str] = mapped_column(String(20), nullable=False, default="Pendiente") # Pendiente, Recibido, Cancelado
 
     # RELACION ROL
-    # rol_id: Mapped[int] = mapped_column(ForeignKey('rol.id'))
-    # prod = relationship("Productos", back_populates="factura_detalles")
+    rol_id: Mapped[int] = mapped_column(ForeignKey('rol.id'))
+    roles = relationship("Rol", back_populates="compras")
 
     # RELACION STOCK
-    # stock = relationship("Stock", back_populates="compras")
+    stock = relationship("Stock", back_populates="compras")
 
     def serialize(self):
         return {
@@ -116,17 +116,19 @@ class Stock(db.Model):
     capacidad_maxima: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # Relacion con los productos
-    # productos = relationship("Productos", back_populates="stock")
+    productos = relationship("Productos", back_populates="stock")
 
     # Relacion con compras
-    # compras = relationship("Compras", back_populates="stock")
+    compras_id: Mapped[int] = mapped_column(ForeignKey('compras.id'))
+    compras = relationship("Compras", back_populates="stock")
 
     def serialize(self):
         return {
             "id": self.id,
             "ubicacion": self.ubicacion,
             "capacidad_maxima": self.capacidad_maxima,
-            "productos": [ps.serialize() for ps in self.productos]
+            "productos": [ps.serialize() for ps in self.productos],
+            "compras_id": self.compras_id
         }
 
 # TABLA DE PRODUCTOS
@@ -147,8 +149,8 @@ class Productos(db.Model):
     user = relationship("User", back_populates="products")
 
     # Relación con el stock
-    # stock_id: Mapped[int] = mapped_column(ForeignKey('stock.id'), nullable=False)
-    # stock = relationship("Stock", back_populates="productos")
+    stock_id: Mapped[int] = mapped_column(ForeignKey('stock.id'), nullable=False)
+    stock = relationship("Stock", back_populates="productos")
 
     def serialize(self):
         return {
@@ -199,7 +201,8 @@ class Facturas(db.Model):
     id_factura = relationship("Detalles_Facturas", back_populates="factura")
 
     # RELACION ROL
-    # roles = relationship("Rol", back_populates="facturas")
+    rol_id: Mapped[int] = mapped_column(ForeignKey('rol.id'), nullable=False)
+    roles = relationship("Rol", back_populates="facturas")
 
     def serialize(self):
         return {
@@ -217,7 +220,8 @@ class Facturas(db.Model):
             "impuestos": self.impuestos,
             "total": self.total,
             "estado": self.estado,
-            "notas": self.notas
+            "notas": self.notas,
+            "rol_id": self.rol_id
         }
 
 # TABLA DETALLES_FACTURA (PRODUCTOS - FACTURAS)
