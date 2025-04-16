@@ -13,6 +13,7 @@ from werkzeug.utils import secure_filename  # Línea 9
 
 api = Blueprint('api', __name__)
 
+CORS(api)
 
 @api.route('/home')
 def sitemap():

@@ -32,6 +32,9 @@ class User(db.Model):
         # Este es el setter que encripta la contraseña antes de guardarla
         self._password = generate_password_hash(password)
 
+    def hash_password(password):
+        return generate_password_hash(password)
+
     # MÉTODO PARA VERIFICAR LA CONTRASEÑA
     def check_password(self, password):
         # Este método compara la contraseña proporcionada con la almacenada (encriptada)
@@ -66,6 +69,12 @@ class Rol(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     user = relationship("User", back_populates="roles")
 
+    # RELACION COMPRAS
+    # compras = relationship("Compras", back_populates="roles")
+
+    # RELACION FACTURAS
+    # facturas = relationship("Facturas", back_populates="roles")
+
     def serialize(self):
         return {
             "id": self.id,
@@ -82,6 +91,13 @@ class Compras(db.Model):
     numero_factura: Mapped[str] = mapped_column(String(50), nullable=False)
     total: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     estado: Mapped[str] = mapped_column(String(20), nullable=False, default="Pendiente") # Pendiente, Recibido, Cancelado
+
+    # RELACION ROL
+    # rol_id: Mapped[int] = mapped_column(ForeignKey('rol.id'))
+    # prod = relationship("Productos", back_populates="factura_detalles")
+
+    # RELACION STOCK
+    # stock = relationship("Stock", back_populates="compras")
 
     def serialize(self):
         return {
@@ -100,7 +116,10 @@ class Stock(db.Model):
     capacidad_maxima: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # Relacion con los productos
-    productos = relationship("Productos", back_populates="stock")
+    # productos = relationship("Productos", back_populates="stock")
+
+    # Relacion con compras
+    # compras = relationship("Compras", back_populates="stock")
 
     def serialize(self):
         return {
@@ -128,8 +147,8 @@ class Productos(db.Model):
     user = relationship("User", back_populates="products")
 
     # Relación con el stock
-    stock_id: Mapped[int] = mapped_column(ForeignKey('stock.id'), nullable=False)
-    stock = relationship("Stock", back_populates="productos")
+    # stock_id: Mapped[int] = mapped_column(ForeignKey('stock.id'), nullable=False)
+    # stock = relationship("Stock", back_populates="productos")
 
     def serialize(self):
         return {
@@ -178,6 +197,9 @@ class Facturas(db.Model):
 
     # RELACION UNO A MUCHOS CON DETALLES_FACTURAS, LA TABLA DE MUCHOS
     id_factura = relationship("Detalles_Facturas", back_populates="factura")
+
+    # RELACION ROL
+    # roles = relationship("Rol", back_populates="facturas")
 
     def serialize(self):
         return {
