@@ -50,6 +50,9 @@ class User(db.Model):
     # Relación uno a muchos con Logo, la tabla muchos
     logo = relationship("Logo", back_populates="user")
 
+    # Relación uno a muchos con Cliente, la tabla muchos
+    cliente = relationship("Cliente", back_populates="user")
+
     def serialize(self):
         return {
             "id": self.id,
@@ -88,6 +91,7 @@ class Compras(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     fecha_compra: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
     proveedor: Mapped[str] = mapped_column(String(120), nullable=False) # Nombre usuario (firstname)
+    cif_empresa: Mapped[str] = mapped_column(String(50), nullable=False)
     numero_factura: Mapped[str] = mapped_column(String(50), nullable=False)
     total: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     estado: Mapped[str] = mapped_column(String(20), nullable=False, default="Pendiente") # Pendiente, Recibido, Cancelado
@@ -104,6 +108,7 @@ class Compras(db.Model):
             "id": self.id,
             "fecha_compra": self.fecha_compra,
             "proveedor": self.proveedor,
+            "cif_empresa": self.cif_empresa,
             "numero_factura": self.numero_factura,
             "total": self.total,
             "estado": self.estado
@@ -185,12 +190,6 @@ class Facturas(db.Model):
     num_factura: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
     fecha_emision: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
     fecha_vencimiento: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    cliente_nombre: Mapped[str] = mapped_column(String(120), nullable=False)
-    cliente_direccion: Mapped[str] = mapped_column(String(350), nullable=True)
-    cliente_email: Mapped[str] = mapped_column(String(120), nullable=True)
-    cliente_telefono: Mapped[str] = mapped_column(String(20), nullable=True)
-    cif_cliente: Mapped[str] = mapped_column(String(50), nullable=True)
-    cif_empresa: Mapped[str] = mapped_column(String(50), nullable=False)
     subtotal: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     impuestos: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     total: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -210,12 +209,6 @@ class Facturas(db.Model):
             "num_factura": self.num_factura,
             "fecha_emision": self.fecha_emision.isoformat() if self.fecha_emision else None,
             "fecha_vencimiento": self.fecha_vencimiento.isoformat() if self.fecha_vencimiento else None,
-            "cliente_nombre": self.cliente_nombre,
-            "cliente_direccion": self.cliente_direccion,
-            "cliente_email": self.cliente_email,
-            "cliente_telefono": self.cliente_telefono,
-            "cif_cliente": self.cif_cliente,
-            "cif_empresa": self.cif_empresa,
             "subtotal": self.subtotal,
             "impuestos": self.impuestos,
             "total": self.total,
@@ -257,5 +250,29 @@ class Logo(db.Model):
         return {
             "id": self.id,
             "image_logo_url": self.image_logo_url,
+            "user_id": self.user_id
+        }
+    
+# TABLA CLIENTE
+class Cliente(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nombre: Mapped[str] = mapped_column(String(120), nullable=False)
+    direccion: Mapped[str] = mapped_column(String(350), nullable=True)
+    email: Mapped[str] = mapped_column(String(120), nullable=True)
+    telefono: Mapped[str] = mapped_column(String(20), nullable=True)
+    cif: Mapped[str] = mapped_column(String(50), nullable=True)
+
+    # RELACION MUCHOS A UNO CON USER, LA TABLA "UNO"
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    user = relationship("User", back_populates="cliente")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "direccion": self.direccion,
+            "email": self.email,
+            "telefono": self.telefono,
+            "cif": self.cif,
             "user_id": self.user_id
         }

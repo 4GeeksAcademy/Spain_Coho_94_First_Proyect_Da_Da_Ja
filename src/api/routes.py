@@ -1,5 +1,5 @@
 from flask import request, jsonify, url_for, Blueprint, session
-from api.models import db, User, Logo, Compras, Facturas
+from api.models import db, User, Logo, Compras, Facturas, Cliente
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -609,3 +609,104 @@ def delete_factura(factura_id):
         db.session.rollback()
         return jsonify({'error': f"Error al eliminar la factura: {str(e)}"}), 500
     
+#
+# --- Cliente ---
+# Muestra todos los clientes
+#
+@api.route('/clientes', methods=['GET'])
+def get_all_clientes():
+
+    clientes = Cliente.query.all()
+
+    if not clientes:
+        return jsonify({ "msg": "Clients not found"}), 404
+    
+    response_body = [cliente.serialize() for cliente in clientes]
+
+    return jsonify(response_body), 200
+
+#
+# Muestra los datos de un cliente
+#
+@api.route('/clientes/<int:cliente_id>', methods=['GET'])
+def get_cliente(cliente_id):
+
+    cliente = Cliente.query.get(cliente_id)
+
+    if cliente is None:
+        return jsonify({ "msg": "Client not found"}), 404
+    
+    response_body = cliente.serialize()
+    
+    return jsonify(response_body), 200
+
+
+#
+# Actualizar un cliente existente
+#
+@api.route('/clientes/<int:cliente_id>', methods=['PUT'])
+def update_cliente(cliente_id):
+    # Buscamos al cliente por su ID
+    cliente = Cliente.query.get(cliente_id)
+
+    # Verificamos si el ciente existe
+    if not cliente:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+    
+    # Obtenemos los datos de la request
+    request_data = request.get_json()
+
+    # Actualizamos los campos si estan presentes en la solicitud
+    if "nombre" in request_data:
+        cliente.nombre = request_data['nombre']
+    
+    if "direccion" in request_data:
+        cliente.direccion = request_data['direccion']
+
+    if "email" in request_data:
+        cliente.email = request_data['email']
+
+    if "telefono" in request_data:
+        cliente.telefono = request_data['telefono']
+
+    if "cif" in request_data:
+        cliente.cif = request_data['cif']
+
+    # Si sale error al actualizar cliente, hacemos try/except
+    try:
+        # Guardamos los cambios en la base de datos
+        db.session.commit()
+
+        # Devolvemos (retornamos) el cliente actualizada
+        return jsonify({
+            'msg': "Cliente actualizado con éxito",
+            'update': cliente.serialize()
+        }), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al actualizar el cliente: {str(e)}"}), 500
+
+#
+# Borra un cliente
+#
+@api.route('/clientes/<int:cliente_id>', methods=['DELETE'])
+def delete_cliente(cliente_id):
+    # Buscamos al cliente por ID
+    cliente = Cliente.query.get(cliente_id)
+
+    # Verificar si el cliente existe
+    if not cliente:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+    
+    # Si sale error al eliminar cliente, hacemos try/except
+    try:
+        # Eliminamos el cliente de la base de datos
+        db.session.delete(cliente)
+        db.session.commit()
+
+        # Devolver mensaje de exito
+        return jsonify({"message": f"Cliente {cliente_id} eliminado correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Error al eliminar el cliente: {str(e)}"}), 500
