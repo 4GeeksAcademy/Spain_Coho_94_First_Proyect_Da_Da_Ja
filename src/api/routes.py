@@ -710,3 +710,56 @@ def delete_cliente(cliente_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f"Error al eliminar el cliente: {str(e)}"}), 500
+    
+#
+# Restablecimiento de contraseñas
+#
+
+# Solicitar la recuperación de la contraseña (/request-reset)
+@api.route('/request-reset', methods=['POST'])
+def request_password_reset():
+
+    body = request.get_json()
+    email = body.get('email')
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'msg': "Usuario no encontrado"}), 404
+    
+    # Generamos un token único
+    reset_token = create_access_token(identity=user.id)
+
+    # Aquí puedes enviar un correo con un enlace como:
+    # https://tuapp.com/reset-password?token=xxx
+    # Por ahora, lo devolvemos como prueba
+    return jsonify({
+        "msg": "Token de recuperación generado",
+        "reset_token": reset_token  # (en producción se enviaría por email)
+    }), 200
+
+# Resetear la contraseña (/reset-password)
+@api.route('/reset-password', methods=['POST'])
+@jwt_required()
+def reset_password():
+    user_id = get_jwt_identity()
+    body = request.get_json()
+    new_password = body.get('new_password')
+
+    if not new_password:
+        return {'msg': "La nueva contraseña es obligatoria"}, 400
+    
+    user = User.query.get(user_id)
+    if not user:
+        return {'msg': "Usuario no encontrado"}, 404
+    
+    # Hasheamos y guardamos la contraseña
+    user._password = User.hash_password(new_password)
+
+    try:
+        db.session.commit()
+        return {'msg': "Contraseña restaurada correctamente"}, 200
+    except Exception as e:
+        db.session.rollback()
+        return {'msg': f"Error al resetear la contrasena: {str(e)}"}
+
+
