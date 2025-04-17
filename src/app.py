@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS  # IMPORTA CORS
 from api.upload_routes import upload 
+from flask_mail import Mail # LIBRERÍA FLASK_MAIL
 
 # IMPORTACIONES DEL PROYECTO
 
@@ -41,6 +42,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # INICIALIZAR LA MIGRACIÓN DE LA BASE DE DATOS
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
+# CONFIGURACIÓN DEL SERVIDOR DE CORREO (p.e. con gmail)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'tucorreo@gmail.com'  # tu email
+app.config['MAIL_PASSWORD'] = 'tu_contraseña_o_clave_app'  # mejor usar una app password
+app.config['MAIL_DEFAULT_SENDER'] = 'tucorreo@gmail.com'
+
+mail = Mail(app)
 
 # CONFIGURAR JWT (JSON WEB TOKENS) CON CLAVES Y EXPIRACIÓN
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET")

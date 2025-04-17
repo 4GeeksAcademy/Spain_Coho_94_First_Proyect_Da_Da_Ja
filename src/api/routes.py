@@ -4,6 +4,8 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask import send_from_directory
+from flask_mail import Message, Mail
+from datetime import timedelta
 from api.upload_routes import upload
 import os
 import random
@@ -14,6 +16,9 @@ from werkzeug.utils import secure_filename  # Línea 9
 api = Blueprint('api', __name__)
 
 CORS(api)
+
+# Inicializas directamente Flask_Mail
+mail = Mail(api)
 
 @api.route('/home')
 def sitemap():
@@ -718,25 +723,28 @@ def delete_cliente(cliente_id):
 # Solicitar la recuperación de la contraseña (/request-reset)
 @api.route('/request-reset', methods=['POST'])
 def request_password_reset():
-
     body = request.get_json()
     email = body.get('email')
 
     user = User.query.filter_by(email=email).first()
     if not user:
-        return jsonify({'msg': "Usuario no encontrado"}), 404
+        return jsonify({'msg': "Si el correo existe, recibirás un email con instrucciones"}), 200
     
     # Generamos un token único
-    reset_token = create_access_token(identity=user.id)
+    reset_token = create_access_token(identity=user.id, expires_delta=timedelta(minutes=15))
 
-    # Aquí puedes enviar un correo con un enlace como:
-    # https://tuapp.com/reset-password?token=xxx
-    # Por ahora, lo devolvemos como prueba
-    return jsonify({
-        "msg": "Token de recuperación generado",
-        "reset_token": reset_token  # (en producción se enviaría por email)
-    }), 200
+    reset_link = f"http://localhost:3000/reset-password?token={reset_token}"  # Cambia al dominio real en prod
 
+    try :
+        msg = Message("Recupera tu contraseña", recipients=[email])
+        msg.body = f"Hola {user.firstname}, haz clic en el siguiente enlace para restablecer tu contraseña:\n\n{reset_link}\n\nEste enlace caduca en 15 minutos."
+        mail.send(msg)
+
+        return jsonify({"msg": "Correo de recuperación enviado"}), 200
+    except Exception as e:
+        return jsonify({'error': f"No se puedo enviar el correo: {str(e)}"}), 500
+
+    
 # Resetear la contraseña (/reset-password)
 @api.route('/reset-password', methods=['POST'])
 @jwt_required()

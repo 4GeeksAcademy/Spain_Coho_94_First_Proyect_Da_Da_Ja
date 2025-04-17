@@ -25,6 +25,7 @@ flask = "*"
 pandas = "*"
 openpyxl = "*"
 tigrisdb = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.13"
