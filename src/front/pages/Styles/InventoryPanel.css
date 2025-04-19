@@ -8,7 +8,7 @@
 
 .panel-title {
   margin-bottom: 20px;
-  color: var(--primary);
+  color: var(--text3);
   text-align: center;
   font-size: 1.8rem;
 }
@@ -21,7 +21,7 @@
 }
 
 .tab-button {
-  padding: 10px 20px;
+  padding: 10px 15px;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
@@ -31,43 +31,45 @@
   transition: all 0.3s ease;
   font-size: 1rem;
 }
-
 .tab-button:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  scale: 1.1;
+  transition: 0,1s;
 }
-
 .tab-button.active {
-  border-bottom: 3px solid var(--primary);
-  color: var(--primary);
-  font-weight: bold;
+  border-bottom: 6px solid var(--text3);
+  color: var(--text3);
 }
-
 .tab-content {
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 /* Información de inventario */
 .inventory-info {
-  background-color: var(--card);
-  padding: 15px;
+  background-color: var(--bg);
+  padding: 10px;
+  border-style: solid;
+  border-width: 3px;
+  border-color: var(--border);
   border-radius: 8px;
   margin-bottom: 20px;
   box-shadow: 0 2px 4px var(--shadow);
 }
 
 .current-inventory-info {
+  background-color: var(--bg);
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .inventory-label {
+  background-color: var(--bg);
   font-weight: bold;
   margin-right: 5px;
 }
 
 .inventory-name {
-  color: var(--primary);
+  color: var(--text2);
   font-weight: bold;
 }
 
@@ -84,6 +86,10 @@
   overflow-x: auto;
   background-color: var(--card);
   border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--border);
+
   box-shadow: 0 4px 6px var(--shadow);
 }
 
@@ -138,14 +144,16 @@
 .inventory-table input:focus,
 .inventory-table textarea:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: var(--text3);
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: var(--shadow);
 }
 
 /* Botones */
 .btn-group {
   display: flex;
-  gap: 5px;
+  gap: 12px;
 }
 
 .edit-btn, .delete-btn, .save-btn, .cancel-btn {
@@ -158,7 +166,11 @@
 }
 
 .edit-btn {
-  background-color: var(--primary);
+  background-color: transparent;
+  border-style: solid;
+  border-color: var(--border);
+  border-width: 1px;
+  border-radius: 15px;
   color: white;
 }
 
@@ -167,7 +179,11 @@
 }
 
 .delete-btn {
-  background-color: #dc3545;
+  background-color: transparent;
+  border-style: solid;
+  border-color: var(--border);
+  border-width: 1px;
+  border-radius: 15px;
   color: white;
 }
 
@@ -176,7 +192,11 @@
 }
 
 .save-btn {
-  background-color: #28a745;
+ background-color: transparent;
+  border-style: solid;
+  border-color: var(--border);
+  border-width: 1px;
+  border-radius: 15px;
   color: white;
 }
 
@@ -185,7 +205,11 @@
 }
 
 .cancel-btn {
-  background-color: #6c757d;
+  background-color: transparent;
+  border-style: solid;
+  border-color: var(--border);
+  border-width: 1px;
+  border-radius: 15px;
   color: white;
 }
 
@@ -195,21 +219,25 @@
 
 /* Pestaña de carga de inventario */
 .upload-tab, .download-tab {
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
+  margin-top: 100px;
 }
 
 .upload-container, .download-container {
-  background-color: var(--card);
-  padding: 25px;
+  background-color: var(--bg2);
+  padding: 35px;
   border-radius: 8px;
+  border-style: solid;
+  border-color: var(--border);
+  border-width: 1px;
   box-shadow: 0 2px 4px var(--shadow);
 }
 
 .upload-container h2, .download-container h2 {
   margin-top: 0;
   margin-bottom: 20px;
-  color: var(--primary);
+  color: var(--text3);
   font-size: 1.5rem;
 }
 

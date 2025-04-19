@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import './Styles/Settings.css';
+import './Styles/InventoryUploader.css';
 
 const InventoryManager = () => {
   const [file, setFile] = useState(null);
