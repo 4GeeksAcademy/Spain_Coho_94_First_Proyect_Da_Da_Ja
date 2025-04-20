@@ -47,9 +47,9 @@ db.init_app(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'tucorreo@gmail.com'  # tu email
-app.config['MAIL_PASSWORD'] = 'tu_contraseña_o_clave_app'  # mejor usar una app password
-app.config['MAIL_DEFAULT_SENDER'] = 'tucorreo@gmail.com'
+app.config['MAIL_USERNAME'] = 'davidvaamonde.bueno@gmail.com'  # añadir correo propio
+app.config['MAIL_PASSWORD'] = '1234'  # mejor usar una app password, o poner una contraseña sencilla (1234)
+app.config['MAIL_DEFAULT_SENDER'] = 'davidvaamonde.bueno@gmail.com'
 
 mail = Mail(app)
 
