@@ -1,0 +1,75 @@
+.profile-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  
+  .profile-card {
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 12px var(--shadow);
+    padding: 2rem;
+    transition: all var(--transition-speed);
+  }
+  
+  .profile-card h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--text);
+  }
+  
+  .profile-details {
+    margin-top: 1.5rem;
+  }
+  
+  .detail-group {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .detail-group label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text2);
+  }
+  
+  .detail-group p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text);
+  }
+  
+  .profile-form {
+    margin-top: 1.5rem;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+  }
+  
+  .form-buttons button {
+    flex: 0 0 48%;
+  }
+  
+  @media (max-width: 576px) {
+    .form-buttons {
+      flex-direction: column;
+    }
+    
+    .form-buttons button {
+      width: 100%;
+      margin-bottom: 0.75rem;
+    }
+    
+    .form-buttons button:last-child {
+      margin-bottom: 0;
+    }
+  }

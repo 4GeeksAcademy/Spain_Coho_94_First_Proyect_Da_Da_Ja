@@ -12,6 +12,8 @@ import PageLogin from "./pages/PageLogin";
 import Cart from "./pages/Cart";
 import InventoryPanel from "./pages/Admin/InventoryPanel"; 
 import StoreSettings from "./pages/Admin/StoreSettings"; 
+import Profile from "./pages/Admin/Profile";
+import './components/Styles/GlobalStyles.css'; 
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,11 +23,12 @@ export const router = createBrowserRouter(
       <Route path="/home" element={<Home />} />
       <Route path="/single/:theId" element={<Single />} /> 
       <Route path="/demo" element={<Demo />} />
-      {/* Redirección de settings a inventory */}
+
       <Route path="/settings" element={<InventoryPanel />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/inventory" element={<InventoryPanel />} /> 
       <Route path="/admin/store-settings" element={<StoreSettings />} /> 
+      <Route path="/profile" element={<Profile />} /> 
     </Route>
   )
 );

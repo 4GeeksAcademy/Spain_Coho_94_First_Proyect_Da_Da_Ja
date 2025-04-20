@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Styles/Login.css';
 
-// URL del logo por defecto
-const DEFAULT_LOGO = "https://raw.githubusercontent.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/refs/heads/main/src/front/assets/logo.png";
-
 const Login = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -37,7 +34,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-
+            // Realizar petición de login
             const response = await axios.post(`${baseUrl}api/login`, formData);
             
             // Guardar token
@@ -45,40 +42,16 @@ const Login = () => {
             
             // Preservar el tema actual si existe
             const currentTheme = localStorage.getItem('userTheme');
-            console.log("Tema actual antes de login:", currentTheme);
-            
-            // Obtener datos existentes del usuario (puede contener el logo personalizado)
-            const existingUserData = JSON.parse(localStorage.getItem("userData") || "{}");
-            const existingLogo = existingUserData.logo_url !== DEFAULT_LOGO ? existingUserData.logo_url : null;
             
             // Inicializar userData con los datos de usuario de la respuesta
             let userData = response.data.user || {};
-            console.log("Datos de usuario de la respuesta:", userData);
             
-            // PRESERVAR EL LOGO PERSONALIZADO SI EXISTE
-            if (existingLogo) {
-                console.log("Conservando logo personalizado existente");
-                userData.logo_url = existingLogo;
-            } 
-            // Si no hay logo, usar el de la respuesta o el predeterminado
-            else if (!userData.logo_url) {
-                console.log("Usando logo predeterminado");
-                userData.logo_url = DEFAULT_LOGO;
-            }
-            
-            // PRESERVAR EL TEMA
-            // Primero intentar usar el tema existente en localStorage
+            // Conservar el tema si existe
             if (currentTheme) {
-                console.log("Restaurando tema guardado:", currentTheme);
                 userData.theme = currentTheme;
-            } 
-            // Luego intentar preservar el tema de datos existentes
-            else if (existingUserData.theme) {
-                console.log("Usando tema de userData existente:", existingUserData.theme);
-                userData.theme = existingUserData.theme;
             }
             
-            // Intentar extraer más información del token
+            // Intentar extraer más información del token si es necesario
             try {
                 const token = response.data.access_token;
                 const base64Url = token.split('.')[1];
@@ -88,25 +61,18 @@ const Login = () => {
                 }).join(''));
                 
                 const tokenData = JSON.parse(jsonPayload);
-                console.log("Token data en Login:", tokenData);
                 
                 // Si se encuentran claves adicionales en el token, guardarlas
                 if (tokenData) {
                     // No sobrescribir datos que ya están en userData
                     if (!userData.email && tokenData.email) userData.email = tokenData.email;
-                    if (!userData.name && tokenData.name) userData.name = tokenData.name;
-                    if (!userData.username && tokenData.username) userData.username = tokenData.username;
-                    
-                    // Preservar el logo_object_key si existe en el token
-                    if (tokenData.logo_object_key) {
-                        userData.logo_object_key = tokenData.logo_object_key;
-                    }
+                    if (!userData.firstname && tokenData.firstname) userData.firstname = tokenData.firstname;
+                    if (!userData.lastname && tokenData.lastname) userData.lastname = tokenData.lastname;
+                    if (!userData.shopname && tokenData.shopname) userData.shopname = tokenData.shopname;
                 }
             } catch (error) {
                 console.error("Error decodificando token:", error);
             }
-            
-            console.log("userData preparado para guardar:", userData);
             
             // Guardar en localStorage
             localStorage.setItem('userData', JSON.stringify(userData));
@@ -117,32 +83,17 @@ const Login = () => {
             }
             
             // Disparar eventos para actualizar la UI
-            setTimeout(() => {
-                // Usar setTimeout para asegurarnos que localStorage se ha actualizado
-                console.log("Disparando eventos de login");
-                window.dispatchEvent(new Event('userLoggedIn'));
-                
-                // Disparar evento específico para el logo
-                if (userData.logo_url) {
-                    window.dispatchEvent(new CustomEvent('logoChanged', {
-                        detail: { logo_url: userData.logo_url }
-                    }));
-                }
-                
-                // Disparar evento de storage para notificar cambios
-                window.dispatchEvent(new StorageEvent('storage', {
-                    key: 'userData',
-                    newValue: JSON.stringify(userData)
-                }));
-                
-                // Evento específico para forzar carga del logo
-                window.dispatchEvent(new Event('forceLogoLoad'));
-                
-                // Redirigir al home
-                setTimeout(() => {
-                    navigate('/home');
-                }, 100);
-            }, 100);
+            window.dispatchEvent(new Event('userLoggedIn'));
+            
+            // Disparar evento de storage para notificar cambios
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'userData',
+                newValue: JSON.stringify(userData)
+            }));
+            
+            // Redirigir al home
+            navigate('/home');
+            
         } catch (error) {
             console.error('Error de login:', error);
             

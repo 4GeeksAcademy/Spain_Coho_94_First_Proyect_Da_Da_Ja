@@ -4,7 +4,7 @@ import "./Styles/Register.css";
 import ErrorMessage1 from "../components/ErrorMessage1";
 import ErrorMessage2 from "../components/ErrorMessage2";
 
-    function Register() {
+function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [firstname, setFirstname] = useState("");
@@ -52,9 +52,31 @@ import ErrorMessage2 from "../components/ErrorMessage2";
             }
             
             if (response.ok) {
-                // Guardar token - usar "access_token" para ser consistente con login
+                // Guardar token y datos del usuario
                 localStorage.setItem("access_token", data.access_token);
-                navigate("/Settings");
+                
+                // Preparar y guardar los datos del usuario
+                const userData = {
+                    firstname: firstname,
+                    lastname: lastname,
+                    shopname: shopname,
+                    email: email,
+                    // Usar datos adicionales si están disponibles en la respuesta
+                    ...(data.user || {})
+                };
+                
+                localStorage.setItem("userData", JSON.stringify(userData));
+                
+                // Notificar a otros componentes
+                window.dispatchEvent(new Event('userLoggedIn'));
+                
+                // Disparar evento de storage para notificar cambios
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'userData',
+                    newValue: JSON.stringify(userData)
+                }));
+                
+                navigate("/home"); // Cambiado de "/Settings" a "/home" para consistencia
             } else {
                 console.error("Error en respuesta:", {
                     status: response.status,
@@ -150,7 +172,6 @@ import ErrorMessage2 from "../components/ErrorMessage2";
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-
 
                 <button type="submit" className="reg-btn">Registrarse</button>
             </form>

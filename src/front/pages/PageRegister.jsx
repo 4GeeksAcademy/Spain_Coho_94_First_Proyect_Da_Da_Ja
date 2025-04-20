@@ -1,19 +1,12 @@
-import React, { useEffect } from "react"
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import Register from "../components/Register.jsx";
-import './Styles/PageRegister.css'
+import React from 'react';
+import Register from '../components/Register';
 
-
- const PageRegister = () => {
-
-	return (
-
-		<div className="reg-content">
-			 <Register/>
-		</div>
-
-
-	);
-}; 
+const PageRegister = () => {
+  return (
+    <div className="container">
+      <Register />
+    </div>
+  );
+};
 
 export default PageRegister;
