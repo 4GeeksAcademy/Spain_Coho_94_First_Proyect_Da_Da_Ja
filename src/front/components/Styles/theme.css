@@ -37,53 +37,32 @@ body {
   /* Theme Ligth */
   .theme-light {
     --bg: #91bccf;
+    --bg2: white;
     --text: #192633;
+    --text2: #fdfeff;
     --primary: #427b98;
     --primary-hover: #396581;
     --card: #ddebf0;
     --border: #bed8e3;
+    --border2: transparent;
     --shadow: #2f455670;
   }
   
   /* Theme Dark */
   .theme-dark {
     --bg: #282828;
+    --bg2: white;
     --text: #34546a;
     --text2: #ddebf0;
     --primary: #3d3d3d;
     --primary-hover: #34546a;
     --card: #2c3e4d;
-    --border: #5d97b3;
+    --border: #282828;
+    --border2: #000000;
     --border-hover: #ddebf0;
     --shadow: #000000;
   }
-  /* Theme Brownie */
-  .theme-dark {
-    --bg: #746049;
-    --bg2: #746049;
-    --text: #eee5d3;
-    --text2: #bc8b52;
-    --text3: #57352c;
-    --primary: #665242;
-    --primary-hover: #4d3e36;
-    --card: #746049;
-    --border: #d5c3ba;
-    --border-hover: #ddebf0;
-    --shadow: #43362c;
-  }
-
-  /* Theme pinki */
-  .theme-pink {
-    --bg: #e7b9f8;
-    --text: #862c9d;
-    --text2: #4d0e5d;
-    --primary: #c962ea;
-    --primary-hover: #a030c0;
-    --card: #d88ef2;
-    --border: #5d97b3;
-    --border-hover: #4d0e5d;
-    --shadow: #4d0e5d;
-  }
+  
 
 
   
