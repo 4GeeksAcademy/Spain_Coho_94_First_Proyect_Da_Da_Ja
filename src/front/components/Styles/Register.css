@@ -1,104 +1,116 @@
+/*_______________MENU__LOGIN______________*/
+* {
+  box-sizing: border-box;
+}
+
 .register {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 1rem;
-  min-height: calc(100vh - var(--navbar-height) - 40px);
+  min-height: 100vh;
+  padding: 10px;
+  position: relative;
 }
 
 .reg-form-content {
-  width: 100%;
-  max-width: 450px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 2px 12px var(--shadow);
-  padding: 2rem;
-  transition: all var(--transition-speed);
+  display: block;
+  width: clamp(280px, 90%, 400px);
+  padding: clamp(1em, 2vw, 2em);
+  border-radius: 20px;
+  color: var(--text2); 
+  background: var(--primary); 
+  box-shadow: 0px 0px 16px var(--shadow); 
+  position: relative;
 }
 
+/*__________AREA_PARA_ESCRIBIR_____________*/
+
+.reg-form-control {
+  border: 2px solid;
+  border-color: var(--border);
+  padding: 10px;
+  outline: none;
+  border-radius: 20px;
+  margin-bottom: 3px;
+  background: #acc6cd;
+}
+
+.reg-form-control:focus,
+.reg-form-control:active {
+  background: #acc6cd;
+  border-color: var(--border-hover);
+  outline: none;
+  box-shadow: none;
+  border-radius: 20px;
+}
+
+/* Corrige el color del fondo cuando el navegador autocompleta */
+.reg-form-control:-webkit-autofill,
+.reg-form-control:-webkit-autofill:hover,
+.reg-form-control:-webkit-autofill:focus,
+.reg-form-control:-webkit-autofill:active {
+  background: #acc6cd !important;
+  -webkit-box-shadow: 0 0 0px 1000px #acc6cd inset !important;
+  color: #2f4556 !important;
+  
+}
+
+/*__________TEXTO_____________*/
+.reg-form-label,
 .reg-label-content {
-  margin-bottom: 1.25rem;
+  color: var(--text2); 
+  background: none;
+  display: block;
+  margin-bottom: 10px;
+  padding-left: 15px;
 }
 
 .reg-form-label {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-weight: 500;
-  color: var(--text);
-  font-size: 0.9rem;
+  display: inline-block;
+  margin-top: 10px;
 }
 
-.reg-form-control {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background-color: var(--input-bg);
-  color: var(--text);
-  transition: all var(--transition-speed);
-}
-
-.reg-form-control:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(93, 140, 213, 0.15);
-}
-
+/*________BUTTON___SUBMIT______________*/
 .reg-btn {
+  all:unset;
   width: 100%;
-  padding: 0.75rem;
-  background-color: var(--button-bg);
-  color: var(--button-text);
-  border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-speed);
-  margin-top: 0.75rem;
+  max-width: 160px;
+  display: block;
+  border-radius: 20px;
+  margin: 20px auto 0;
+  color: white;
+  background: none; 
+  box-shadow: 3px 3px 10px var(--shadow); 
 }
 
 .reg-btn:hover {
-  background-color: var(--accent-hover);
-  transform: translateY(-1px);
+  color: white;
+  box-shadow: 3px 3px 10px var(--shadow); 
+  background: var(--primary); 
+  border-color: var(--border); 
 }
 
-.reg-btn:disabled {
-  background-color: var(--border);
-  cursor: not-allowed;
-  transform: none;
+.reg-btn:active {
+  color: white;
+  background: var(--primary); 
+  box-shadow: 3px 3px 10px var(--shadow); 
+  border-color: var(--border); 
+  transform: scale(0.95);
 }
 
-.reg-message-box {
-  width: 100%;
-  max-width: 450px;
-  margin-bottom: 1.25rem;
-  border-radius: 6px;
-  padding: 0.75rem;
-  font-size: 0.85rem;
-}
-
-.reg-message-box.error {
-  background-color: rgba(244, 67, 54, 0.1);
-  border: 1px solid var(--error);
-  color: var(--error);
-}
-
-.reg-message-box.error2 {
-  background-color: rgba(255, 183, 77, 0.1);
-  border: 1px solid var(--warning);
-  color: var(--warning);
-}
-
-/* Adaptaciones para el tema oscuro */
-.dark-theme .reg-form-content {
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
+/*_______________RESPONCIVE______________*/
+@media (min-width: 480px) {
   .reg-form-content {
-    padding: 1.5rem;
+    max-width: 350px;
+    padding: 1.5em;
   }
 }
+
+@media (min-width: 768px) {
+  .reg-form-content {
+    max-width: 400px;
+    padding: 2em;
+  }
+}
+
+/*_______________RESPONCIVE______________*/

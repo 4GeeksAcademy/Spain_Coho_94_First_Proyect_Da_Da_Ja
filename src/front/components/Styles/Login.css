@@ -1,119 +1,113 @@
+/*_______________MENU__LOGIN______________*/
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - var(--navbar-height) - 40px);
-  padding: 1rem;
+  min-height: 100vh;
+  padding: 10px;
+  position: relative;
 }
 
-.login-form {
-  width: 100%;
-  max-width: 400px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 2px 12px var(--shadow);
-  padding: 2rem;
-  transition: all var(--transition-speed);
-}
-
-.login-form h2 {
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-size: 1.5rem;
-  color: var(--text);
-}
-
-.form-group {
-  margin-bottom: 1.25rem;
-}
-
-.form-group label {
+.log-form-content {
   display: block;
-  margin-bottom: 0.4rem;
-  font-weight: 500;
-  color: var(--text);
-  font-size: 0.9rem;
+  width: clamp(250px, 80%, 400px);
+  padding: clamp(1em, 2vw, 2em);
+  border-radius: 20px;
+  color: hsl(206, 20%, 32%);
+  background: #5d97b3;
+  box-shadow: 9px 9px 19px #192633;
+    position: relative;
 }
 
-.form-group input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background-color: var(--input-bg);
-  color: var(--text);
-  transition: all var(--transition-speed);
-}
+/*__________AREA_PARA_ESCRIBIR_____________*/
 
-.form-group input:focus {
+.log-form-control {
+  border: 2px solid #34546a;
+  padding: 10px;
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(93, 140, 213, 0.15);
+  border-radius: 20px;
+  margin-bottom: 3px;
+  background: #acc6cd;
+}
+.log-form-control:focus,
+.log-form-control:active {
+  background: #acc6cd;
+  border-color: white;
+  outline: none;
+  box-shadow: none;
+  border-radius: 20px;
+}
+/* Corrige el color del fondo cuando el navegador autocompleta */
+.log-form-control:-webkit-autofill,
+.log-form-control:-webkit-autofill:hover,
+.log-form-control:-webkit-autofill:focus,
+.log-form-control:-webkit-autofill:active {
+  background: #acc6cd !important;
+  -webkit-box-shadow: 0 0 0px 1000px #acc6cd inset !important;
+  color: #2f4556 !important;
 }
 
-.login-button {
+/*__________TEXTO_____________*/
+
+.log-form-label,
+.log-label-content {
+  color: #ddebf0;
+  background: none;
+  display: block;
+  margin-bottom: 10px;
+  padding-left: 15px;
+}
+.log-form-label {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+/*__________TEXTO_____________*/
+
+
+
+/*________BUTTONN___SUBMIT______________*/
+.log-btn {
   width: 100%;
-  padding: 0.75rem;
-  background-color: var(--button-bg);
-  color: var(--button-text);
-  border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-speed);
-  margin-top: 0.75rem;
+  max-width: 120px;
+  display: block;
+  border-radius: 20px;
+  margin: 20px auto 0;
+  color: white;
+  background: none;
+  box-shadow: 3px 3px 10px #192633;
 }
 
-.login-button:hover {
-  background-color: var(--accent-hover);
-  transform: translateY(-1px);
+.log-btn:hover {
+  color: white;
+  box-shadow: 3px 3px 10px #192633;
+  background: none;
+  border-color: #415361;
 }
 
-.login-button:disabled {
-  background-color: var(--border);
-  cursor: not-allowed;
-  transform: none;
+.log-btn:active {
+  color: white;
+    background: none;
+    box-shadow: 3px 3px 10px #192633;
+    border-color: #415361;
+    transform: scale(0.95);
 }
+/*__________BUTTON___SUBMIT______________*/
 
-.error-message {
-  background-color: rgba(244, 67, 54, 0.1);
-  color: var(--error);
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 1.25rem;
-  font-size: 0.85rem;
-  text-align: center;
-  border: 1px solid var(--error);
-}
-
-.register-link {
-  margin-top: 1.25rem;
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--text2);
-}
-
-.register-link a {
-  color: var(--accent);
-  font-weight: 500;
-  transition: color var(--transition-speed);
-}
-
-.register-link a:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
-}
-
-/* Adaptaciones para el tema oscuro */
-.dark-theme .login-form {
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
-  .login-form {
-    padding: 1.5rem;
+/*_______________RESPONCIVE______________*/
+@media (min-width: 480px) {
+  .reg-form-content {
+    max-width: 350px;
+    padding: 1.5em;
   }
 }
+
+@media (min-width: 768px) {
+  .reg-form-content {
+    max-width: 400px;
+    padding: 2em;
+  }
+}
+
+/*_______________RESPONCIVE______________*/

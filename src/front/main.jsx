@@ -7,7 +7,6 @@ import { StoreProvider } from './hooks/useGlobalReducer';  // Import the StorePr
 import { BackendURL } from './components/BackendURL';
 import { ThemeProvider } from '../front/Contexts/ThemeContext.jsx'; 
 
-
 const Main = () => {
 
     if (! import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL == "") return (
