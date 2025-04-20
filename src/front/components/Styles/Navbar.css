@@ -5,7 +5,9 @@
   max-width: 100%;
   height: 140px;
   padding: 0 20px;
+  margin-top: 30px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   position: relative;
   border-bottom-left-radius: 20px;
@@ -14,9 +16,47 @@
   z-index: 1100;
 }
 
-.logo{
+.nav-left,
+.nav-center,
+.nav-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.nav-right {
+  justify-content: flex-end;
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.logo-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;  
+  height: 150px;
+  max-width: 200px;
+  border-radius: 50%;
+  border: 2px solid white; 
+  display: flex;
+  cursor: pointer;
+  overflow: hidden;
   background: none;
-  
+  transition: all 0.3s ease-in-out;
+  pointer-events: auto;
+  z-index: 5;
 }
 
 /*--------BUTTONS------*/
