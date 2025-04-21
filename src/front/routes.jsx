@@ -12,6 +12,8 @@ import PageLogin from "./pages/PageLogin";
 import Cart from "./pages/Cart";
 import InventoryPanel from "./pages/Admin/InventoryPanel"; 
 import StoreSettings from "./pages/Admin/StoreSettings"; 
+import Profile from "./pages/Admin/Profile";
+
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +25,7 @@ export const router = createBrowserRouter(
       <Route path="/demo" element={<Demo />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/inventory" element={<InventoryPanel />} /> 
+      <Route path="/profile" element={<Profile />} /> 
       <Route path="store-settings" element={<StoreSettings />} /> 
     </Route>
   )

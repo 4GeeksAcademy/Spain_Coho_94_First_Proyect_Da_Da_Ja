@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useTheme } from '../Contexts/ThemeContext';
+import Footer from "../components/Footer";
 
 export const Layout = () => {
   const { theme } = useTheme();
@@ -18,12 +19,12 @@ export const Layout = () => {
   }, [theme]);
 
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div>
       <Navbar />
-      <main className="flex-grow-1">
+      <main>
         <Outlet />
       </main>
-      {/* Aquí puedes añadir un Footer si lo deseas */}
+      <Footer />
     </div>
   );
 };

@@ -5,16 +5,16 @@ import { useState, useEffect } from "react";
 
 // URLs para los logos según el tema
 const LIGHT_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Logo.png?raw=true";
-const DARK_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Logo-Dark.png?raw=true"; // Reemplaza esta URL con la de tu logo para tema oscuro
+const DARK_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Dark.png?raw=true";
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  
+
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("access_token"));
   const [userName, setUserName] = useState("");
 
-  // Logo basado en el tema actual
+  // Logo segun el tema actual
   const currentLogo = theme === "light" ? LIGHT_THEME_LOGO : DARK_THEME_LOGO;
 
   // Función para obtener el nombre del usuario
@@ -33,7 +33,7 @@ const Navbar = () => {
 
   // -----------------------BOTON LOGOUT-------------------------
   const handleLogout = () => {
-    // Guardar el tema actual antes de cerrar sesión
+
     const currentTheme = localStorage.getItem('userTheme');
 
     // Limpiar datos de sesión
@@ -46,7 +46,7 @@ const Navbar = () => {
     }
 
     setIsLoggedIn(false);
-    navigate("/login");
+    navigate("/home");
   };
 
   useEffect(() => {
@@ -89,17 +89,16 @@ const Navbar = () => {
             />
           </div>
         </div>
-    
+
         {/* A la izquierda los botones de navegación */}
         <div className="nav-center">
           <Link to="/home" className="nav-btn">Home</Link>
-          {isLoggedIn && (
-            <>
-              <Link to="/inventory" className="nav-btn">Inventario</Link>
-              <Link to="/admin/store-settings" className="nav-btn">Datos del Comercio</Link>
-              <Link to="/cart" className="nav-btn">Cart</Link>
-            </>
-          )}
+
+          <Link to="/inventory" className="nav-btn">Inventario</Link>
+          <Link to="/store-settings" className="nav-btn">Datos del Comercio</Link>
+          <Link to="/Profile" className="nav-btn">Menu</Link>
+
+
         </div>
 
         {/* A la derecha los botones del usuario */}

@@ -8,16 +8,11 @@ const Home = () => {
   const navigate = useNavigate();
 
     // Boton al menu del inventario
-    const handleInventaryClick = (e) => {
+    const handleRegisterClick = (e) => {
       e.preventDefault();
-      navigate('/inventory'); 
+      navigate('/'); 
   };
-    // Botones al menu de la tienda
-    const handleStoreClick = (e) => {
-      e.preventDefault();
-      navigate('/store-settings'); 
-  };
-
+  
   return (
     <div className="home-container">
       <div className="home-card">
@@ -43,13 +38,13 @@ const Home = () => {
           <div className="home-card">
             <h3>Gestiona tu inventario</h3>
             <p>Accede a todas las herramientas para administrar tus productos de manera eficiente.</p>
-            <button className="home-btn" onClick={handleInventaryClick}>Ir al inventario </button>
+            <button className="home-btn" onClick={handleRegisterClick}>Ir al inventario </button>
           </div>
        
           <div className="home-card">
             <h3>Configura tu tienda</h3>
             <p>Personaliza la apariencia y configuración de tu tienda online.</p>
-            <button className="home-btn" onClick={handleStoreClick}>Configuración</button>
+            <button className="home-btn" onClick={handleRegisterClick}>Configuración</button>
 
         </div>
         
