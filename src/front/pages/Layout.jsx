@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useTheme } from '../Contexts/ThemeContext';
 import Footer from "../components/Footer";
-import NotificationHandler from "../../FireBase/NotificationHandler";
+import NotificationHandler from "../../api/FireBase/NotificationHandler";
 
 export const Layout = () => {
   const { theme } = useTheme();

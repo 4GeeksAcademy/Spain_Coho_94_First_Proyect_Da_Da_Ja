@@ -83,3 +83,4 @@ __pycache__/
 src/credentials/*.json
 src/config/serviceAccountKey.json
 src/credentials/store4us-21dbe-firebase-adminsdk.json
+firebase/serviceAccountKey.json

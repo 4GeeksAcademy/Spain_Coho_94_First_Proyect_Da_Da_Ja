@@ -12,7 +12,7 @@ def initialize_firebase():
             "type": os.getenv("FIREBASE_TYPE"),
             "project_id": os.getenv("FIREBASE_PROJECT_ID"),
             "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
-            "private_key": os.getenv("FIREBASE_PRIVATE_KEY"),
+            "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace("\\n", "\n") if os.getenv("FIREBASE_PRIVATE_KEY") else None,
             "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
             "client_id": os.getenv("FIREBASE_CLIENT_ID"),
             "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
@@ -21,7 +21,7 @@ def initialize_firebase():
             "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_X509_CERT_URL"),
             "universe_domain": os.getenv("FIREBASE_UNIVERSE_DOMAIN")
         }
-
+        
         # Verificar que todas las credenciales estén presentes
         missing_vars = [k for k, v in firebase_credentials.items() if v is None]
         if missing_vars:
@@ -32,7 +32,7 @@ def initialize_firebase():
             
             if os.path.exists(cred_path):
                 print(f"Usando archivo de credenciales de respaldo: {cred_path}")
-                cred = credentials.Certificate(cred_path)
+                red = credentials.Certificate("firebase/serviceAccountKey.json")
                 firebase_admin.initialize_app(cred)
                 return True
             else:

@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import os
 import datetime
 from flask import Flask, jsonify, request, send_from_directory
@@ -16,6 +17,8 @@ from api.Routes.store_routes import store
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+load_dotenv()
+
 # CREAR LA INSTANCIA DE LA APLICACIÓN FLASK
 app = Flask(__name__)
 
@@ -25,7 +28,7 @@ initialize_firebase()
 # Registra el Blueprint con el prefijo de URL
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(upload, url_prefix='/upload')
-app.register_blueprint(store, url_prefix='/api')  # Registrar el nuevo Blueprint
+app.register_blueprint(store, url_prefix='/api') 
 
 # CONFIGURACIÓN CORS: PERMITIR MÚLTIPLES ORÍGENES SI ES NECESARIO
 CORS(app, supports_credentials=True)
@@ -85,7 +88,7 @@ def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
         path = 'index.html'
     response = send_from_directory(static_file_dir, path)
-    response.cache_control.max_age = 0  # EVITAR CACHÉ
+    response.cache_control.max_age = 0
     return response
 
 # EJECUTAR LA APLICACIÓN SI EL ARCHIVO ES EJECUTADO DIRECTAMENTE

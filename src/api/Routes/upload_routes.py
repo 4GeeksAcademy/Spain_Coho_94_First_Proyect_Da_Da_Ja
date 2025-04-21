@@ -1,6 +1,6 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.models import db, User, Productos, TigrisFiles, DeviceToken
-import firebase_admin
+import firebase_init
 from firebase_admin import credentials, messaging
 from flask import Blueprint, request, jsonify, send_file
 from werkzeug.utils import secure_filename
