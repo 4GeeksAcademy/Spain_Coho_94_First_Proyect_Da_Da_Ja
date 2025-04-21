@@ -17,6 +17,8 @@ api = Blueprint('api', __name__)
 
 CORS(api)
 
+mail = Mail()
+
 @api.route('/home')
 def sitemap():
     return generate_sitemap(api)
