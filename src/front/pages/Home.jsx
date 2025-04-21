@@ -1,43 +1,58 @@
 import React from 'react';
 import { useTheme } from '../Contexts/ThemeContext';
+import './Styles/Home.css';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const { theme } = useTheme();
-  
+  const navigate = useNavigate();
+
+    // Boton al menu del inventario
+    const handleInventaryClick = (e) => {
+      e.preventDefault();
+      navigate('/inventory'); 
+  };
+    // Botones al menu de la tienda
+    const handleStoreClick = (e) => {
+      e.preventDefault();
+      navigate('/store-settings'); 
+  };
+
   return (
-    <div className="container mt-4">
-      <div className="card">
-        <h2>Bienvenido a Store4Us</h2>
-        <p>Tu plataforma de comercio electrónico todo en uno.</p>
-        <p>Tema actual: <strong>{theme === 'light' ? 'Claro' : 'Oscuro'}</strong></p>
+    <div className="home-container">
+      <div className="home-card">
+        <h1 className='home-title'>Store4Us</h1> 
+        <p className='home-text-color'>Tu plataforma de comercio electrónico todo en uno.</p>
+       
+        <div className="home-explication">
+          <h4>¿Y que te ofrecemos?</h4>
         
-        <div className="mt-4">
-          <h3>Características destacadas</h3>
           <ul>
-            <li>Gestión de inventario simplificada</li>
-            <li>Panel de administración intuitivo</li>
-            <li>Personalización de tienda</li>
-            <li>Experiencia de usuario optimizada</li>
+            <li>Una gestión de inventario simplificada</li>
+            <li>Un panel de administración intuitivo</li>
+            <li>Personalización de tu tienda</li>
+            <li>Una experiencia de usuario optimizada</li>
           </ul>
         </div>
       </div>
       
-      <div className="row">
-        <div className="col-md-6">
-          <div className="card">
+      <div className="home-access">    
+
+        <h2 className="home-text2">Comienza ya!</h2>
+
+          <div className="home-card">
             <h3>Gestiona tu inventario</h3>
             <p>Accede a todas las herramientas para administrar tus productos de manera eficiente.</p>
-            <button className="btn btn-primary">Ir al inventario</button>
+            <button className="home-btn" onClick={handleInventaryClick}>Ir al inventario </button>
           </div>
-        </div>
-        
-        <div className="col-md-6">
-          <div className="card">
+       
+          <div className="home-card">
             <h3>Configura tu tienda</h3>
             <p>Personaliza la apariencia y configuración de tu tienda online.</p>
-            <button className="btn btn-primary">Configuración</button>
-          </div>
+            <button className="home-btn" onClick={handleStoreClick}>Configuración</button>
+
         </div>
+        
       </div>
     </div>
   );

@@ -1,14 +1,21 @@
 import { useNavigate, Link } from "react-router-dom";
-import "./Styles/Navbar.css"; 
+import "./Styles/Navbar.css";
 import { useTheme } from '../Contexts/ThemeContext.jsx';
 import { useState, useEffect } from "react";
+
+// URLs para los logos según el tema
+const LIGHT_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Logo.png?raw=true";
+const DARK_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Logo-Dark.png?raw=true"; // Reemplaza esta URL con la de tu logo para tema oscuro
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-
+  
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("access_token"));
+  const [userName, setUserName] = useState("");
 
+  // Logo basado en el tema actual
+  const currentLogo = theme === "light" ? LIGHT_THEME_LOGO : DARK_THEME_LOGO;
 
   // Función para obtener el nombre del usuario
   const getUserName = () => {
@@ -25,23 +32,46 @@ const Navbar = () => {
   };
 
   // -----------------------BOTON LOGOUT-------------------------
-  const LogoutButton = () => {
+  const handleLogout = () => {
+    // Guardar el tema actual antes de cerrar sesión
+    const currentTheme = localStorage.getItem('userTheme');
+
+    // Limpiar datos de sesión
     localStorage.removeItem("access_token");
-    console.log('Token eliminado:', localStorage.getItem("access_token"));
+    localStorage.removeItem("userData");
+
+    // Restaurar el tema guardado
+    if (currentTheme) {
+      localStorage.setItem('userTheme', currentTheme);
+    }
+
     setIsLoggedIn(false);
     navigate("/login");
   };
 
   useEffect(() => {
     const checkLoginStatus = () => {
-      setIsLoggedIn(!!localStorage.getItem("access_token"));
+      const hasToken = !!localStorage.getItem("access_token");
+      setIsLoggedIn(hasToken);
+
+      if (hasToken) {
+        setUserName(getUserName());
+      } else {
+        setUserName("");
+      }
     };
 
     checkLoginStatus();
+
+    // Escuchar eventos de cambio de almacenamiento
     window.addEventListener("storage", checkLoginStatus);
+    window.addEventListener("userLoggedIn", checkLoginStatus);
+    window.addEventListener("userLoggedOut", checkLoginStatus);
 
     return () => {
       window.removeEventListener("storage", checkLoginStatus);
+      window.removeEventListener("userLoggedIn", checkLoginStatus);
+      window.removeEventListener("userLoggedOut", checkLoginStatus);
     };
   }, []);
 
@@ -49,8 +79,19 @@ const Navbar = () => {
     <nav>
       <div className="nav-content">
 
-        {/* A la izquierda los botones de navegación */}
+        {/* el logo */}
         <div className="nav-left">
+          <div className="logo-wrapper">
+            <img
+              src={currentLogo}
+              alt="Logo"
+              className="logo-img"
+            />
+          </div>
+        </div>
+    
+        {/* A la izquierda los botones de navegación */}
+        <div className="nav-center">
           <Link to="/home" className="nav-btn">Home</Link>
           {isLoggedIn && (
             <>
@@ -61,40 +102,29 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* En el centro el logo */}
-        <div className="nav-center">
-          <div className="logo-wrapper">
-            <img
-              src="https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Logo.png?raw=true"
-              alt="Logo"
-              className="logo-img"
-            />
-          </div>
-        </div>
-
         {/* A la derecha los botones del usuario */}
-
         <div className="nav-right">
-    
-            <span className="wellcome-text">Hola, Dani</span>
-          
+          <button onClick={toggleTheme} className="nav-btn theme-btn">
+            {theme === "light" ? "Oscuro" : "Claro"}
+          </button>
 
-            <button onClick={toggleTheme} className="nav-theme">
-              {theme === "light" ? "Oscuro" : "Claro"}
-            </button>
-
-              <div className="user-login">
-              {!isLoggedIn ? (
-                <>
-                  <Link to="/" className="nav-btn">Register</Link>
-                  <Link to="/login" className="nav-btn">Login</Link>
-                </>
-              ) : (
-                <button className="nav-btn" onClick={LogoutButton}>
+          <div className="user-login">
+            {!isLoggedIn ? (
+              <>
+                <Link to="/" className="nav-btn">Register</Link>
+                <Link to="/login" className="nav-btn">Login</Link>
+              </>
+            ) : (
+              <div className="user-logout-container">
+                {userName && (
+                  <span className="welcome-text">¡Hola, {userName}!</span>
+                )}
+                <button className="nav-btn" onClick={handleLogout}>
                   Cerrar sesión
                 </button>
-              )}
               </div>
+            )}
+          </div>
         </div>
 
       </div>
