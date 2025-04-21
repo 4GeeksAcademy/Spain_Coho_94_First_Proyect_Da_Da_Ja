@@ -1,7 +1,5 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from api.models import db, User, Productos, TigrisFiles, DeviceToken
-import firebase_init
-from firebase_admin import credentials, messaging
+from api.models import db, User, Productos, TigrisFiles
 from flask import Blueprint, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from botocore.client import Config
@@ -38,49 +36,6 @@ s3 = boto3.client(
 
 UPLOAD_FOLDER = "upload"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# -----FUNCION PARA ENVIAR NOTIFICACIONES FIREBASE CLOUD MESSAGING-------------
-def send_low_stock_notification(user_id, product_name, quantity):
-    try:
-        # Obtener el token del dispositivo del usuario
-        device = DeviceToken.query.filter_by(user_id=user_id).first()
-
-        if not device or not device.token:
-            print(f"No hay token de dispositivo para el usuario {user_id}")
-            return False
-
-        # ----------------------------------------------------------------BORRAR DESPUES DE HACER PRUEBAS
-        tokens = DeviceToken.query.all()
-        print("Tokens registrados:", [(t.user_id, t.token[:20] if t.token else "None") for t in tokens])
-        # ----------------------------------------------------------------BORRAR DESPUES DE HACER PRUEBAS
-        
-        if device.token:
-            print(f"Enviando notificación con token: {device.token[:20]}...")
-
-            # Crear mensaje
-            message = messaging.Message(
-                notification=messaging.Notification(
-                    title="¡Alerta de inventario bajo!",
-                    body=f"El producto '{product_name}' tiene {quantity} unidades restantes."
-                ),
-                token=device.token,
-            )
-
-            # Enviar mensaje
-            try:
-                response = messaging.send(message)
-                print(f"Notificación enviada correctamente: {response}")
-                return True
-            except messaging.UnregisteredError:
-                print(f"Token no registrado o inválido. Eliminando token...")
-                db.session.delete(device)
-                db.session.commit()
-                return False
-
-    except Exception as e:
-        print(f"Error al enviar notificación: {str(e)}")
-        traceback.print_exc()
-        return False
 
 
 # Función auxiliar para verificar extensiones de archivo permitidas

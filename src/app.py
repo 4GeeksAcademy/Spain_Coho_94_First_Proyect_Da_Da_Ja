@@ -5,8 +5,6 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-from firebase_init import initialize_firebase
-
 
 # IMPORTACIONES DEL PROYECTO
 from api.utils import APIException, generate_sitemap
@@ -22,8 +20,6 @@ load_dotenv()
 # CREAR LA INSTANCIA DE LA APLICACIÓN FLASK
 app = Flask(__name__)
 
-# Inicializa Firebase
-initialize_firebase()
 
 # Registra el Blueprint con el prefijo de URL
 app.register_blueprint(api, url_prefix='/api')
