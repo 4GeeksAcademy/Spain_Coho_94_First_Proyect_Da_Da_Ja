@@ -1,11 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'  // Global styles for your application
-import { RouterProvider } from "react-router-dom";  // Import RouterProvider to use the router
-import { router } from "./routes";  // Import the router configuration
-import { StoreProvider } from './hooks/useGlobalReducer';  // Import the StoreProvider for global state management
+import './index.css' 
+import { RouterProvider } from "react-router-dom";  
+import { router } from "./routes";  
+import { StoreProvider } from './hooks/useGlobalReducer';  
 import { BackendURL } from './components/BackendURL';
-import { ThemeProvider } from '../front/Contexts/ThemeContext.jsx'; 
+import { ThemeProvider } from '../front/Contexts/ThemeContext.jsx';
+import NotificationHandler from './FireBase/NotificationHandler.jsx';  
 
 const Main = () => {
 
@@ -16,13 +17,11 @@ const Main = () => {
     );
     return (
         <React.StrictMode>
-            {/* Provide global state to all components */}
             <StoreProvider>
-
-                <ThemeProvider>   {/* COMIENZA COMPONENTE QUE CAMBIA EL TEMA */}
-                    <RouterProvider router={router}>
-                    </RouterProvider>
-                </ThemeProvider> {/* TERMINA COMPONENTE QUE CAMBIA EL TEMA */}
+                <ThemeProvider>
+                    <NotificationHandler />
+                    <RouterProvider router={router} />
+                </ThemeProvider>
             </StoreProvider>
         </React.StrictMode>
     );

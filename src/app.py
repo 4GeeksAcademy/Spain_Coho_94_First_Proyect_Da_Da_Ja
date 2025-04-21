@@ -4,6 +4,9 @@ from flask import Flask, jsonify, send_from_directory
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS  # IMPORTA CORS
+import firebase_admin
+from firebase_admin import credentials
+
 
 # IMPORTACIONES DEL PROYECTO
 from api.utils import APIException, generate_sitemap
@@ -88,3 +91,12 @@ if __name__ == '__main__':
     # OBTENER EL PUERTO DE LA VARIABLE DE ENTORNO O USAR EL VALOR PREDETERMINADO 3001
     PORT = int(os.environ.get('PORT', 3001))
     app.run(host='0.0.0.0', port=PORT, debug=True)
+
+
+# Obtener la ruta absoluta al archivo de credenciales
+current_dir = os.path.dirname(os.path.abspath(__file__))
+service_account_path = os.path.join(current_dir, 'config', 'serviceAccountKey.json')
+
+# Inicializar Firebase Admin SDK
+cred = credentials.Certificate(service_account_path)
+firebase_admin.initialize_app(cred)

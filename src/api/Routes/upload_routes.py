@@ -38,7 +38,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # -------------ENDPOINT PARA SUBIR EL INVENTARIO A TIGRIS-----------------
 
-
 @upload.route('/inventory', methods=['POST'])
 @jwt_required()
 def upload_inventory():
@@ -69,22 +68,42 @@ def upload_inventory():
         df.columns = [col.lower().replace(' ', '_') for col in df.columns]
         records = df.to_dict(orient="records")
 
+        # Lista para almacenar productos con stock bajo
+        low_stock_products = []
+
         for record in records:
+            quantity = record['unidades']
             producto = Productos(
                 product_name=record['nombre_del_producto'],
                 price_per_unit=record['precio_por_unidad'],
                 description=record['descripción'],
-                quantity=record['unidades'],
+                quantity=quantity,
                 user_id=user_id
             )
             db.session.add(producto)
+            
+            # Verificar si el producto tiene 5 o menos unidades
+            if quantity <= 5:
+                low_stock_products.append({
+                    'product_name': record['nombre_del_producto'],
+                    'quantity': quantity
+                })
 
         tigris_file = TigrisFiles(url=file_url, user_id=user_id)
         db.session.add(tigris_file)
         db.session.commit()
         os.remove(file_path)
+        
+        # Enviar notificaciones para productos con stock bajo
+        for product in low_stock_products:
+            send_low_stock_notification(
+                user_id,
+                product['product_name'],
+                product['quantity']
+            )
+            
         return jsonify({
-            "message": f"{len(records)} productos cargados correctamente.",
+            "message": f"{len(records)} productos cargados correctamente. {len(low_stock_products)} con stock bajo.",
             "file_url": file_url
         })
 
@@ -356,15 +375,51 @@ def delete_product(product_id):
         print(f"Error al eliminar producto: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# -------------ACTUALIZA PRODUCTOS DE LA BASE DE DATOS DESDE EL PANEL-------------------------------
 
+# -----FUNCION DEL FIREBASE PARA REGISTAR LOS PRODCUTOS DEL INVENTARIO-------------
+
+# Función para enviar notificación FCM
+def send_low_stock_notification(user_id, product_name, quantity):
+    try:
+        # Obtener el token del dispositivo del usuario
+        device = DeviceToken.query.filter_by(user_id=user_id).first()
+        
+        if not device or not device.token:
+            print(f"No hay token de dispositivo para el usuario {user_id}")
+            return False
+            
+        # Firebase Admin SDK ya debería estar inicializado en app.py
+        from firebase_admin import messaging
+        
+        # Crear mensaje
+        message = messaging.Message(
+            notification=messaging.Notification(
+                title="¡Alerta de inventario bajo!",
+                body=f"El producto '{product_name}' tiene {quantity} unidades restantes."
+            ),
+            token=device.token,
+        )
+        
+        # Enviar mensaje
+        response = messaging.send(message)
+        print(f"Notificación enviada correctamente: {response}")
+        return True
+        
+    except Exception as e:
+        print(f"Error al enviar notificación: {str(e)}")
+        return False
+
+#----------ACTUALIZA PRODUCTOS DE LA BASE DE DATOS DESDE EL PANEL--------------------
+
+# Modificar la ruta de actualización de producto
 @upload.route("/update-product/<int:product_id>", methods=['PUT'])
 @jwt_required()
 def update_product(product_id):
     try:
-        # Verificar el usuario actual (una sola vez)
+        # Verificar el usuario actual
         user_id = get_jwt_identity()
-        user_id = int(user_id)  # Convertir a entero
+        if isinstance(user_id, str) and user_id.isdigit():
+            user_id = int(user_id)
         
         # Obtener datos de la solicitud
         data = request.get_json()
@@ -376,9 +431,6 @@ def update_product(product_id):
         
         if not product:
             return jsonify({"error": "Producto no encontrado"}), 404
-            
-        print(f"Usuario autenticado: {user_id}, tipo: {type(user_id)}")
-        print(f"Usuario del producto: {product.user_id}, tipo: {type(product.user_id)}")
             
         # Verificar que el producto pertenece al usuario actual
         if product.user_id != user_id:
@@ -394,8 +446,19 @@ def update_product(product_id):
         if 'description' in data:
             product.description = data['description']
             
+        # Si se actualiza la cantidad y es baja, enviar notificación
         if 'quantity' in data:
-            product.quantity = int(data['quantity'])
+            new_quantity = int(data['quantity'])
+            product.quantity = new_quantity
+            
+            # Verificar si la cantidad es baja (5 o menos)
+            if new_quantity <= 5:
+                # Enviar notificación
+                send_low_stock_notification(
+                    user_id, 
+                    product.product_name, 
+                    new_quantity
+                )
             
         if 'image_url' in data:
             product.image_url = data['image_url']

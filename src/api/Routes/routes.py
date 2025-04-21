@@ -272,3 +272,37 @@ def delete_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f"Error al eliminar el usuario: {str(e)}"}), 500
+    
+
+# -------RUTA PARA REGISTRAR TOKEN DE DISPOSITIVO...(FIREBACE)---------
+
+@api.route('/register-device-token', methods=['POST'])
+@jwt_required()
+def register_device_token():
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if not data or 'token' not in data:
+            return jsonify({"error": "Token requerido"}), 400
+            
+        device_token = data['token']
+        
+        # Aquí deberías tener un modelo DeviceToken en tus modelos
+        # Verificamos si ya existe un token para este usuario
+        existing_token = DeviceToken.query.filter_by(user_id=user_id).first()
+        
+        if existing_token:
+            # Actualizar token existente
+            existing_token.token = device_token
+        else:
+            # Crear nuevo registro
+            new_token = DeviceToken(user_id=user_id, token=device_token)
+            db.session.add(new_token)
+            
+        db.session.commit()
+        return jsonify({"message": "Token registrado correctamente"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Error al registrar token: {str(e)}"}), 500
