@@ -19,7 +19,7 @@ export default function PasswordResetRequest() {
 
 // URL del fetch a lo mejor hay que cambiarlo para que conecte a backend
     try {
-      const response = await fetch('http://localhost:5000/api/request-reset', {
+      const response = await fetch('http://localhost:3000/api/request-reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })

@@ -3,7 +3,7 @@ from api.models import db, User, Logo, Compras, Facturas, Cliente
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask import send_from_directory
+from flask import send_from_directory, Flask
 from flask_mail import Message, Mail
 from datetime import timedelta
 from api.upload_routes import upload
@@ -16,9 +16,6 @@ from werkzeug.utils import secure_filename  # Línea 9
 api = Blueprint('api', __name__)
 
 CORS(api)
-
-# Inicializas directamente Flask_Mail
-mail = Mail(api)
 
 @api.route('/home')
 def sitemap():

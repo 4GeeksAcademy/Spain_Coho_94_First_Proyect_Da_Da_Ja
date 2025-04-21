@@ -11,7 +11,7 @@ from flask_mail import Mail # LIBRERÍA FLASK_MAIL
 
 from api.utils import APIException, generate_sitemap
 from api.models import db
-from api.routes import api
+from api.routes import api as api_blueprint
 from api.admin import setup_admin
 from api.commands import setup_commands
 
@@ -20,7 +20,7 @@ from api.commands import setup_commands
 app = Flask(__name__)
 CORS(app)
 
-app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(api_blueprint, url_prefix='/api')
 app.register_blueprint(upload, url_prefix='/api')
 
 
