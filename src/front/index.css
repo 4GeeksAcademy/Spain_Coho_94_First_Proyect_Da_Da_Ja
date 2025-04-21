@@ -10,7 +10,7 @@
 
 /* Establecer color de fondo en html y body */
 html, body, #root {
-  background-color: #323232 !important; /* Usa aquí tu color gris oscuro exacto */
+  background-color: var(--bg) !important; /* Usa aquí tu color gris oscuro exacto */
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -20,8 +20,8 @@ html, body, #root {
 
 /* Para cuando uses temas, aplicar con variables CSS */
 :root {
-  --dark-bg-color: #323232; /* Tu color gris oscuro */
-  --light-bg-color: #f5f5f5; /* Tu color claro si lo necesitas */
+  --bg: #323232; 
+  --bg: #f5f5f5; 
 }
 
 /* Aplicar tema oscuro */
@@ -32,11 +32,11 @@ body.dark-theme {
 
 /* Aplicar tema claro */
 body.light-theme {
-  background-color: var(--light-bg-color) !important;
-  color: black;
+  background-color: var(--bg) !important;
+  color: var(--text);
 }
 
-/* Asegurar que todos los contenedores principales hereden el color de fondo */
+
 #root, 
 .app-container, 
 #app,

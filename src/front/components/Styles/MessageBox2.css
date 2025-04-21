@@ -8,46 +8,88 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; 
+  z-index: 800; 
 }
 
-.message-box  {
+.message-box-error   {
     width: 90%;
     max-width: 300px; 
     padding: 1.5em;
     border-radius: 20px;
-    color: hsl(206, 20%, 32%);
-    background: #d9d9d9;
-    box-shadow: 9px 9px 19px #192633;
+    color: var(--text);
+    background: var(--border2);
     text-align: center;
     position: absolute; 
     top: 450px; 
     left: 50%;
     transform: translateX(-50%); 
-    z-index: 1010;
+    z-index: 1100;
   }
 
   p {
     background: none;
   }
 
-  /* Estilo del botón */
-.box-btn {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background: #d9d9d9;
-  color: #415361;
+
+  /* Estilo del botón 1 */
+.box-btn-1 {
+  width: 6rem;
+  height: 2rem;
+  font-size: 1rem;
+  text-align: center;
+  justify-content: center;
+  margin-top: 15px;
+  padding: 5px 20px;
+  background: none;
+  color: var(--border);
   border: none;
-  border-radius: 15px;
-  border-color: #415361;
+  border-radius: 6px;
+  border-color: var(--border);
   border-style: solid;
-  box-shadow: 3px 3px 15px #192633;
+  box-shadow: none;
+  border-width: 1px;
+  cursor: pointer;
+
+}
+
+.box-btn-1:hover {
+  background: var(--error);
+  color: var(--text);
+  border-color: var(--error);
+  box-shadow: none;
+  scale: 01.1;
+  transition: all 0.1s ease;
+}
+
+.box-btn-1:active {
+  box-shadow: none;
+  scale: 0.9;
+  transition: all 0.1s ease;
+}
+  /* Estilo del botón 2*/
+.box-btn-2 {
+  margin-top: 30px;
+  padding: 8px 18px;
+  background: none;
+  color: var(--border);
+  border: none;
+  border-radius: 6px;
+  border-color: var(--border);
+  border-style: solid;
+  box-shadow: none;
+  border-width: 1px;
   cursor: pointer;
 }
 
-/* Efecto al pasar el mouse sobre el botón */
-.box-btn:active {
-  box-shadow: 4px 4px 10px #2f45566f;
-  scale: 1.1;
-  transition: 0.1s;
+.box-btn-2:hover {
+  color: var(--text2);
+  box-shadow: none;
+  scale: 01.1;
+  transition: all 0.1s ease;
+}
+
+.box-btn-2:active {
+  box-shadow: none;
+  scale: 0.9;
+  transition: all 0.1s ease;
 }

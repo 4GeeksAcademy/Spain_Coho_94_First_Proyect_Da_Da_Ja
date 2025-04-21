@@ -17,7 +17,7 @@
     justify-content: center;
     align-items: center;
     color: var(--text);
-    border-bottom: 1px solid var(--border2);
+    border-bottom: 2px solid var(--text);
     padding: 20px;
     margin: 20px;
     

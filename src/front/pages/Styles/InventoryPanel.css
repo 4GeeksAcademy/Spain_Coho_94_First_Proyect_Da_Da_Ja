@@ -1,46 +1,61 @@
 .inventory-panel {
-  padding: 20px;
-  max-width: 100%;
+  padding: 15px;
+  width: 90%;
+  max-width: 1200px;
   margin: 0 auto;
-  background-color: var(--bg);
+  margin-top: 2rem;
+  background-color: transparent;
+  border-radius: 6px;
+  border-color: var(--border);
+  border-style: solid;
+  border-width: 1px;
+  margin-top: 50px;
   color: var(--text);
 }
 
 .panel-title {
-  margin-bottom: 20px;
+  width: 100%;
+  padding-top: 20px;
+  margin: 0 0 30px 0;
   color: var(--text3);
-  text-align: center;
+  text-align: left;
   font-size: 1.8rem;
+  padding-left: 0.5rem;
 }
 
 /* Estilos para pestañas de navegación */
 .inventory-tabs {
   display: flex;
+  flex-wrap: wrap;
   border-bottom: 1px solid var(--border);
   margin-bottom: 20px;
 }
 
 .tab-button {
-  padding: 10px 15px;
+  padding: 8px 12px;
   background: none;
-  border: none;
+  border-style: none;
   border-bottom: 3px solid transparent;
   cursor: pointer;
   font-weight: 500;
   color: var(--text);
   transition: all 0.3s ease;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
+
 .tab-button:hover {
-  scale: 1.1;
-  transition: 0,1s;
+  transform: scale(1.05);
+  transition: 0.1s;
 }
+
 .tab-button.active {
-  border-bottom: 6px solid var(--text3);
+  border-bottom: 4px solid var(--text3);
   color: var(--text3);
 }
+
 .tab-content {
-  margin-top: 50px;
+  margin-top: 30px;
+  width: 100%;
 }
 
 /* Información de inventario */
@@ -48,36 +63,36 @@
   background-color: var(--bg);
   padding: 10px;
   border-style: solid;
-  border-width: 3px;
+  border-width: 2px;
   border-color: var(--border);
-  border-radius: 8px;
+  border-radius: 6px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px var(--shadow);
+  width: 100%;
 }
 
 .current-inventory-info {
-  background-color: var(--bg);
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 .inventory-label {
   background-color: var(--bg);
-  font-weight: bold;
+  font-weight: regular;
   margin-right: 5px;
 }
 
 .inventory-name {
-  color: var(--text2);
-  font-weight: bold;
+  color: var(--warning);
+  font-weight: regular;
 }
 
 .inventory-date {
   margin-left: 10px;
   font-size: 0.85rem;
-  color: var(--text);
-  opacity: 0.7;
+  color: var(--text3);
+  opacity: 0.8;
 }
 
 /* Tabla de productos */
@@ -85,22 +100,21 @@
   width: 100%;
   overflow-x: auto;
   background-color: var(--card);
-  border-radius: 10px;
+  border-radius: 6px;
   border-style: solid;
   border-width: 2px;
   border-color: var(--border);
-
-  box-shadow: 0 4px 6px var(--shadow);
 }
 
 .inventory-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
 }
 
 .inventory-table th,
 .inventory-table td {
-  padding: 12px 15px;
+  padding: 10px;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
@@ -109,6 +123,7 @@
   background-color: var(--primary);
   color: white;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .inventory-table tr:last-child td {
@@ -124,8 +139,8 @@
 }
 
 .product-thumbnail {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
   border-radius: 4px;
 }
@@ -134,11 +149,12 @@
 .inventory-table input,
 .inventory-table textarea {
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid var(--border);
   border-radius: 4px;
   background-color: var(--bg);
   color: var(--text);
+  font-size: 0.9rem;
 }
 
 .inventory-table input:focus,
@@ -153,80 +169,111 @@
 /* Botones */
 .btn-group {
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .edit-btn, .delete-btn, .save-btn, .cancel-btn {
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
   cursor: pointer;
   border: none;
   font-weight: bold;
   transition: all 0.2s;
+  font-size: 0.9rem;
 }
 
 .edit-btn {
   background-color: transparent;
   border-style: solid;
   border-color: var(--border);
-  border-width: 1px;
-  border-radius: 15px;
-  color: white;
+  border-width: 2px;
+  border-radius: 6px;
+  color: var(--text);
 }
 
 .edit-btn:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--bg2);
+  transform: scale(1.05);
+}
+
+.edit-btn:active {
+  transform: scale(0.95);
+  transition: all 0.1s ease;
 }
 
 .delete-btn {
-  background-color: transparent;
+  background-color: var(--error);
   border-style: solid;
-  border-color: var(--border);
-  border-width: 1px;
-  border-radius: 15px;
-  color: white;
+  border-color: var(--error);
+  border-width: 2px;
+  border-radius: 6px;
+  color: var(--text2);
 }
 
 .delete-btn:hover {
-  background-color: #c82333;
+  background-color: var(--error);
+  border: none;
+  color: white;
+  transform: scale(1.05);
+}
+
+.delete-btn:active {
+  background-color: var(--error);
+  transform: scale(0.95);
+  transition: all 0.1s ease;
 }
 
 .save-btn {
- background-color: transparent;
+  background-color: transparent;
   border-style: solid;
   border-color: var(--border);
-  border-width: 1px;
-  border-radius: 15px;
-  color: white;
+  border-width: 2px;
+  border-radius: 6px;
+  color: var(--text);
 }
 
 .save-btn:hover {
-  background-color: #218838;
+  background-color: var(--bg2);
+  transform: scale(1.05);
+}
+
+.save-btn:active {
+  transform: scale(0.95);
+  transition: all 0.1s ease;
 }
 
 .cancel-btn {
   background-color: transparent;
   border-style: solid;
   border-color: var(--border);
-  border-width: 1px;
-  border-radius: 15px;
-  color: white;
+  border-width: 2px;
+  border-radius: 6px;
+  color: var(--text);
 }
 
 .cancel-btn:hover {
-  background-color: #5a6268;
+  background-color: var(--error);
+  border: none;
+  color: white;
+  transform: scale(1.05);
+}
+
+.cancel-btn:active {
+  transform: scale(0.95);
+  transition: all 0.1s ease;
 }
 
 /* Pestaña de carga de inventario */
 .upload-tab, .download-tab {
-  max-width: 700px;
+  max-width: 100%;
   margin: 0 auto;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .upload-container, .download-container {
   background-color: var(--bg2);
-  padding: 35px;
+  padding: 20px;
   border-radius: 8px;
   border-style: solid;
   border-color: var(--border);
@@ -236,30 +283,30 @@
 
 .upload-container h2, .download-container h2 {
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: var(--text3);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .upload-instructions {
-  margin-bottom: 25px;
-  padding: 15px;
+  margin-bottom: 20px;
+  padding: 12px;
   background-color: rgba(0, 0, 0, 0.03);
   border-radius: 5px;
 }
 
 .upload-instructions ul {
-  margin: 10px 0;
-  padding-left: 25px;
+  margin: 8px 0;
+  padding-left: 20px;
 }
 
 .file-selector {
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .file-input-container {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .file-input-container input[type="file"] {
@@ -274,7 +321,7 @@
 
 .file-label {
   display: block;
-  padding: 15px;
+  padding: 12px;
   background-color: var(--bg);
   border: 2px dashed var(--border);
   border-radius: 6px;
@@ -290,34 +337,35 @@
 }
 
 .file-actions {
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: 15px;
+  padding-top: 15px;
   border-top: 1px solid var(--border);
 }
 
 .file-actions h3 {
   margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
   color: var(--text);
 }
 
 .action-buttons {
   display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 10px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
 .action-button {
-  padding: 10px 20px;
+  padding: 8px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.3s;
   flex: 1;
-  min-width: 200px;
+  min-width: 150px;
+  font-size: 0.9rem;
 }
 
 .update-btn {
@@ -372,28 +420,28 @@
 
 .action-description {
   background-color: rgba(0, 0, 0, 0.03);
-  padding: 10px 15px;
+  padding: 8px 12px;
   border-radius: 5px;
-  margin-top: 15px;
-  font-size: 0.9rem;
+  margin-top: 12px;
+  font-size: 0.85rem;
 }
 
 .action-description p {
-  margin: 8px 0;
+  margin: 6px 0;
 }
 
 /* Pestaña de descarga */
 .download-options {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   flex-wrap: wrap;
 }
 
 .download-option {
   flex: 1;
-  min-width: 300px;
+  min-width: 250px;
   background-color: var(--bg);
-  padding: 20px;
+  padding: 15px;
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -401,25 +449,26 @@
 .download-option h3 {
   margin-top: 0;
   color: var(--primary);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .empty-notice {
   color: #dc3545;
   font-style: italic;
-  margin-top: 10px;
-  font-size: 0.9rem;
+  margin-top: 8px;
+  font-size: 0.85rem;
 }
 
 .empty-state-btn {
   background-color: var(--primary);
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 8px;
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .empty-state-btn:hover {
@@ -431,8 +480,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
-  font-size: 1.2rem;
+  height: 150px;
+  font-size: 1.1rem;
   color: var(--text) !important;
 }
 
@@ -442,31 +491,85 @@
 
 .no-products {
   text-align: center;
-  padding: 30px;
+  padding: 20px;
   color: var(--text);
   opacity: 0.7;
 }
 
 /* Responsive */
+@media (max-width: 992px) {
+  .inventory-panel {
+    width: 95%;
+    padding: 12px;
+  }
+  
+  .panel-title {
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+  }
+  
+  .upload-tab, .download-tab {
+    margin-top: 30px;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .btn-group {
+    flex-wrap: wrap;
+  }
+  
+  .edit-btn, .delete-btn, .save-btn, .cancel-btn {
+    flex: 1;
+    min-width: 80px;
+  }
+}
+
 @media (max-width: 768px) {
+  .inventory-panel {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .panel-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    padding-top: 15px;
+  }
+  
   .inventory-tabs {
     flex-wrap: wrap;
+    gap: 5px;
   }
   
   .tab-button {
     flex: 1;
-    min-width: 120px;
-    font-size: 0.9rem;
-    padding: 8px 10px;
+    min-width: 100px;
+    font-size: 0.85rem;
+    padding: 6px 8px;
   }
   
   .inventory-table {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
   
   .inventory-table th,
   .inventory-table td {
-    padding: 8px 10px;
+    padding: 6px 8px;
+  }
+  
+  .btn-group {
+    flex-direction: row;
+    width: 100%;
+  }
+  
+  .edit-btn, .delete-btn, .save-btn, .cancel-btn {
+    padding: 4px 8px;
+    font-size: 0.85rem;
+  }
+  
+  .upload-container, .download-container {
+    padding: 15px;
   }
   
   .action-buttons {
@@ -475,9 +578,69 @@
   
   .action-button {
     width: 100%;
+    min-width: 100%;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .inventory-panel {
+    margin-top: 30px;
   }
   
-  .download-options {
+  .panel-title {
+    font-size: 1.3rem;
+    padding-top: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .tab-button {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    width: 100%;
+  }
+  
+  .tab-content {
+    margin-top: 20px;
+  }
+  
+  .inventory-table {
+    font-size: 0.8rem;
+  }
+  
+  .product-thumbnail {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .current-inventory-info {
     flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .inventory-date {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+  
+  .btn-group button {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+  }
+  
+  .upload-container h2, .download-container h2 {
+    font-size: 1.2rem;
+  }
+  
+  .file-actions h3 {
+    font-size: 1rem;
+  }
+  
+  .empty-state-btn {
+    width: 100%;
+  }
+  
+  .download-option {
+    min-width: 100%;
   }
 }

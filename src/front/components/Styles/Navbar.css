@@ -59,9 +59,9 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 3px solid var(--border2);
+  border: 3px solid var(--text);
   overflow: hidden;
-  background: var(--bg2);
+  background: white;
   z-index: 5;
   display: flex;
   align-items: center;
@@ -71,7 +71,7 @@
 .logo-img {
   width: 90%;
   height: 90%;
-  object-fit: cover;
+  object-fit: contain;
   pointer-events: auto;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -82,7 +82,7 @@
   all: unset;
   font-size: 18px;
   padding: 5px 15px;
-  color: var(--text2);
+  color: var(--text);
   cursor: pointer;
   transition: transform 0.3s ease;
 }
@@ -116,8 +116,8 @@
 .welcome-text {
   background-color: transparent;
   font-size: 18px;
-  font-weight: 500;
-  color: var(--text2);
+  font-weight: 600;
+  color: var(--text);
   margin-bottom: 2vh;
   text-align: center;
 }

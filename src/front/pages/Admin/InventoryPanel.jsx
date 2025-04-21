@@ -466,14 +466,14 @@ const InventoryPanel = () => {
       {/* Modal de confirmación para eliminar producto */}
       {showDeleteConfirm && (
         <div className="overlay">
-          <div className="message-box error">
+          <div className="message-box-error">
             <p>¿Estás seguro de que deseas eliminar este producto?</p>
             <div className="confirm-buttons">
-              <button type="button" className="box-btn" onClick={deleteProduct}>
-                Eliminar
-              </button>
-              <button type="button" className="box-btn" onClick={cancelDelete}>
+              <button type="button" className="box-btn-2" onClick={cancelDelete}>
                 Cancelar
+              </button>
+              <button type="button" className="box-btn-1" onClick={deleteProduct}>
+                Eliminar
               </button>
             </div>
           </div>
@@ -502,7 +502,7 @@ const InventoryPanel = () => {
         </button>
       </div>
 
-      {/* Información sobre inventario actual - visible en todas las pestañas */}
+      {/*  inventario actual - visible en todas las pestañas */}
       <div className="inventory-info">
         {currentInventory ? (
           <div className="current-inventory-info">
