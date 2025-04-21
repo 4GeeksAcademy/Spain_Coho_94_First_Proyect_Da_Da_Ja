@@ -81,3 +81,4 @@ database.db
 diagram.png
 __pycache__/
 src/credentials/*.json
+src/config/serviceAccountKey.json
