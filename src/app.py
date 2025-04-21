@@ -1,11 +1,10 @@
 import os
 import datetime
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS  # IMPORTA CORS
-import firebase_admin
-from firebase_admin import credentials
+from flask_cors import CORS
+from firebase_init import initialize_firebase
 
 
 # IMPORTACIONES DEL PROYECTO
@@ -17,24 +16,11 @@ from api.Routes.store_routes import store
 from api.admin import setup_admin
 from api.commands import setup_commands
 
-# CONFIGURACIÓN DE FIREBASE
-basedir = os.path.abspath(os.path.dirname(__file__))
-cred_path = os.path.join(basedir, "config", "serviceAccountKey.json")
-
-# Para depuración
-print(f"Buscando archivo de credenciales en: {cred_path}")
-print(f"El archivo existe: {os.path.exists(cred_path)}")
-
-# Inicializar Firebase Admin SDK
-try:
-    cred = credentials.Certificate(cred_path)
-    firebase_admin.initialize_app(cred)
-    print("Firebase Admin SDK inicializado correctamente")
-except Exception as e:
-    print(f"Error al inicializar Firebase Admin SDK: {str(e)}")
-
 # CREAR LA INSTANCIA DE LA APLICACIÓN FLASK
 app = Flask(__name__)
+
+# Inicializa Firebase
+initialize_firebase()
 
 # Registra el Blueprint con el prefijo de URL
 app.register_blueprint(api, url_prefix='/api')
