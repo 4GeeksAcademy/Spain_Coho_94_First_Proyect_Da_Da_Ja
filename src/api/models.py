@@ -19,6 +19,7 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
 
+
     _password: Mapped[str] = mapped_column(
         "password", String(128), nullable=False)
 

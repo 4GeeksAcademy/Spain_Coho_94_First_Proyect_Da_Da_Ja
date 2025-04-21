@@ -1,14 +1,16 @@
-// Firebase Service Worker para recibir notificaciones en segundo plano
+// Este archivo NO debe usar import/export - es un Service Worker
+
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "tu-api-key",
-  authDomain: "tu-auth-domain",
-  projectId: "tu-project-id",
-  storageBucket: "tu-storage-bucket",
-  messagingSenderId: "tu-sender-id",
-  appId: "tu-app-id"
+  apiKey: "AIzaSyBkoWhY15h0KoXnrB-ZnL4SjGVsx8mHTjo",
+  authDomain: "store4us-21dbe.firebaseapp.com",
+  projectId: "store4us-21dbe",
+  storageBucket: "store4us-21dbe.firebasestorage.app",
+  messagingSenderId: "1006937973576",
+  appId: "1:1006937973576:web:2e0629f543b4d5e365097d",
+  measurementId: "G-Q403HG571W"
 });
 
 const messaging = firebase.messaging();

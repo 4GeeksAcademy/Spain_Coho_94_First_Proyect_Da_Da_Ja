@@ -6,7 +6,7 @@ import { router } from "./routes";
 import { StoreProvider } from './hooks/useGlobalReducer';  
 import { BackendURL } from './components/BackendURL';
 import { ThemeProvider } from '../front/Contexts/ThemeContext.jsx';
-import NotificationHandler from './FireBase/NotificationHandler.jsx';  
+import NotificationHandler from '../FireBase/NotificationHandler.jsx';  
 
 const Main = () => {
 

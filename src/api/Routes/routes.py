@@ -3,6 +3,7 @@ from flask import request, jsonify, url_for, Blueprint, session
 from api.utils import generate_sitemap, APIException
 from werkzeug.utils import secure_filename
 from datetime import timedelta, datetime
+from api.models import DeviceToken
 from api.models import db, User, Logo
 from flask import make_response
 from flask_cors import CORS

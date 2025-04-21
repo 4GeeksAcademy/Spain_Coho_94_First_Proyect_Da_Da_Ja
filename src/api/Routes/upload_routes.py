@@ -1,18 +1,21 @@
-
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from api.models import db, User, Productos, TigrisFiles
-from flask import Blueprint, request, jsonify
+from api.models import db, User, Productos, TigrisFiles, DeviceToken
+import firebase_admin
+from firebase_admin import credentials, messaging
+from flask import Blueprint, request, jsonify, send_file
+from werkzeug.utils import secure_filename
 from botocore.client import Config
 from dotenv import load_dotenv
-from flask import send_file
-from flask_cors import CORS
 from io import BytesIO
 import pandas as pd
+import traceback
+import datetime
 import boto3
 import uuid
 import os
+import re
 
-# ... tus imports sin cambios ...
+# Inicializar Blueprint
 load_dotenv()
 upload = Blueprint('upload', __name__)
 
@@ -36,8 +39,102 @@ s3 = boto3.client(
 UPLOAD_FOLDER = "upload"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# -------------ENDPOINT PARA SUBIR EL INVENTARIO A TIGRIS-----------------
+# -----FUNCION PARA ENVIAR NOTIFICACIONES FIREBASE CLOUD MESSAGING-------------
+def send_low_stock_notification(user_id, product_name, quantity):
+    try:
+        # Obtener el token del dispositivo del usuario
+        device = DeviceToken.query.filter_by(user_id=user_id).first()
 
+        if not device or not device.token:
+            print(f"No hay token de dispositivo para el usuario {user_id}")
+            return False
+
+        # ----------------------------------------------------------------BORRAR DESPUES DE HACER PRUEBAS
+        tokens = DeviceToken.query.all()
+        print("Tokens registrados:", [(t.user_id, t.token[:20] if t.token else "None") for t in tokens])
+        # ----------------------------------------------------------------BORRAR DESPUES DE HACER PRUEBAS
+        
+        if device.token:
+            print(f"Enviando notificación con token: {device.token[:20]}...")
+
+            # Crear mensaje
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title="¡Alerta de inventario bajo!",
+                    body=f"El producto '{product_name}' tiene {quantity} unidades restantes."
+                ),
+                token=device.token,
+            )
+
+            # Enviar mensaje
+            try:
+                response = messaging.send(message)
+                print(f"Notificación enviada correctamente: {response}")
+                return True
+            except messaging.UnregisteredError:
+                print(f"Token no registrado o inválido. Eliminando token...")
+                db.session.delete(device)
+                db.session.commit()
+                return False
+
+    except Exception as e:
+        print(f"Error al enviar notificación: {str(e)}")
+        traceback.print_exc()
+        return False
+
+
+# Función auxiliar para verificar extensiones de archivo permitidas
+def allowed_file(filename):
+    """Verifica si el archivo tiene una extensión permitida"""
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# Función auxiliar para subir archivos a Tigris S3
+def upload_to_tigris_s3(file_path, file_name, folder_prefix=None):
+    try:
+        try:
+            s3.head_bucket(Bucket=BUCKET_NAME)
+        except:
+            s3.create_bucket(Bucket=BUCKET_NAME)
+
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        
+        # Añadir prefijo de carpeta si se especifica
+        key_prefix = f"{folder_prefix}/" if folder_prefix else ""
+        unique_filename = f"{key_prefix}{timestamp}_{file_name}"
+
+        # Si file_path es bytes (para imágenes)
+        if isinstance(file_path, bytes):
+            s3.put_object(
+                Body=file_path,
+                Bucket=BUCKET_NAME,
+                Key=unique_filename,
+                ContentType='image/jpeg'  # Ajustar según la extensión
+            )
+        else:
+            s3.upload_file(
+                file_path,
+                BUCKET_NAME,
+                unique_filename,
+                ExtraArgs={
+                    'ContentType': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                }
+            )
+
+        url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': BUCKET_NAME, 'Key': unique_filename},
+            ExpiresIn=3600 * 24 * 7
+        )
+
+        return url
+
+    except Exception as e:
+        raise Exception(f"Error al subir a Tigris S3: {str(e)}")
+
+
+# -------------ENDPOINT PARA SUBIR EL INVENTARIO A TIGRIS-----------------
 @upload.route('/inventory', methods=['POST'])
 @jwt_required()
 def upload_inventory():
@@ -92,7 +189,6 @@ def upload_inventory():
         tigris_file = TigrisFiles(url=file_url, user_id=user_id)
         db.session.add(tigris_file)
         db.session.commit()
-        os.remove(file_path)
         
         # Enviar notificaciones para productos con stock bajo
         for product in low_stock_products:
@@ -102,6 +198,7 @@ def upload_inventory():
                 product['quantity']
             )
             
+        os.remove(file_path)
         return jsonify({
             "message": f"{len(records)} productos cargados correctamente. {len(low_stock_products)} con stock bajo.",
             "file_url": file_url
@@ -114,9 +211,8 @@ def upload_inventory():
         if os.path.exists(file_path):
             os.remove(file_path)
 
+
 # -------------ENDPOINT PARA DESCARGAR EL INVENTARIO DEL USUARIO----------------------------
-
-
 @upload.route("/download_inventory", methods=["GET"])
 @jwt_required()
 def download_user_inventory():
@@ -150,7 +246,6 @@ def download_user_inventory():
         df = pd.DataFrame(data)
 
         # Crear el Excel en memoria
-        from io import BytesIO
         output = BytesIO()
         with pd.ExcelWriter(output, engine='openpyxl') as writer:
             df.to_excel(writer, index=False)
@@ -159,7 +254,6 @@ def download_user_inventory():
         output.seek(0)
 
         # Devolver el archivo Excel con el inventario del usuario
-        from flask import send_file
         return send_file(
             output,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -168,7 +262,6 @@ def download_user_inventory():
         )
 
     except Exception as e:
-        import traceback
         error_traceback = traceback.format_exc()
         print(f"Error al generar el inventario: {str(e)}")
         print(f"Traceback completo: {error_traceback}")
@@ -177,9 +270,8 @@ def download_user_inventory():
             "traceback": error_traceback
         }), 500
 
+
 # -------ENDPOINT PARA DESCARGAR LA PLANTILLA DEL INVENTARIO DE TIGRIS----------
-
-
 @upload.route("/download_template", methods=["GET"])
 @jwt_required()
 def download_template():
@@ -190,7 +282,6 @@ def download_template():
             columns=['nombre_del_producto', 'precio_por_unidad', 'descripción', 'unidades'])
 
         # Crear el Excel en memoria
-        from io import BytesIO
         output = BytesIO()
         with pd.ExcelWriter(output, engine='openpyxl') as writer:
             df.to_excel(writer, index=False)
@@ -199,7 +290,6 @@ def download_template():
         output.seek(0)
 
         # Devolver directamente desde la memoria
-        from flask import send_file
         return send_file(
             output,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -208,7 +298,6 @@ def download_template():
         )
 
     except Exception as e:
-        import traceback
         error_traceback = traceback.format_exc()
         print(f"Error al generar la plantilla: {str(e)}")
         print(f"Traceback completo: {error_traceback}")
@@ -217,9 +306,8 @@ def download_template():
             "traceback": error_traceback
         }), 500
 
+
 # ----------------ENDPOINT PARA ACTUALIZAR EL INVENTARIO DE TIGRIS---------------------
-
-
 @upload.route('/update_inventory', methods=['POST'])
 @jwt_required()
 def update_inventory():
@@ -263,17 +351,19 @@ def update_inventory():
 
         products_updated = 0
         products_added = 0
+        low_stock_products = []
 
         # Procesar cada registro del Excel
         for record in records:
             product_name = record['nombre_del_producto']
+            quantity = record['unidades']
 
             # Si el producto ya existe, actualizarlo
             if product_name in existing_product_names:
                 product = existing_product_names[product_name]
                 product.price_per_unit = record['precio_por_unidad']
                 product.description = record['descripción']
-                product.quantity = record['unidades']
+                product.quantity = quantity
                 products_updated += 1
             # Si no existe, crear uno nuevo
             else:
@@ -281,22 +371,37 @@ def update_inventory():
                     product_name=product_name,
                     price_per_unit=record['precio_por_unidad'],
                     description=record['descripción'],
-                    quantity=record['unidades'],
+                    quantity=quantity,
                     user_id=user_id
                 )
                 db.session.add(new_product)
                 products_added += 1
+            
+            # Verificar si el producto tiene 5 o menos unidades
+            if quantity <= 5:
+                low_stock_products.append({
+                    'product_name': product_name,
+                    'quantity': quantity
+                })
 
         # Guardar el archivo en la tabla de TigrisFiles
         tigris_file = TigrisFiles(url=file_url, user_id=user_id)
         db.session.add(tigris_file)
         db.session.commit()
 
+        # Enviar notificaciones para productos con stock bajo
+        for product in low_stock_products:
+            send_low_stock_notification(
+                user_id,
+                product['product_name'],
+                product['quantity']
+            )
+
         # Limpiar archivo temporal
         os.remove(file_path)
 
         return jsonify({
-            "message": f"Inventario actualizado: {products_updated} productos actualizados, {products_added} productos añadidos.",
+            "message": f"Inventario actualizado: {products_updated} productos actualizados, {products_added} productos añadidos. {len(low_stock_products)} con stock bajo.",
             "file_url": file_url
         })
 
@@ -307,9 +412,8 @@ def update_inventory():
         if os.path.exists(file_path):
             os.remove(file_path)
 
+
 # -------ENDPOINT PARA ELIMINAR EL INVENTARIO DE TIGRIS-------------------------------
-
-
 @upload.route("/delete-inventory/<int:inventory_id>", methods=['DELETE'])
 def delete_inventory_from_tigris(inventory_id):
     """Elimina un archivo de Tigris por su ID en la base de datos"""
@@ -331,9 +435,8 @@ def delete_inventory_from_tigris(inventory_id):
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+
 # -------ENDPOINT PARA ELIMINAR PRODUCTOS DEL INVENTARIO DE TIGRIS-----------------------
-
-
 @upload.route("/delete-product/<int:product_id>", methods=['DELETE'])
 @jwt_required()
 def delete_product(product_id):
@@ -346,8 +449,7 @@ def delete_product(product_id):
         if isinstance(user_id, str) and user_id.isdigit():
             user_id = int(user_id)
 
-        print(
-            f"Intentando eliminar producto {product_id} para usuario {user_id}")
+        print(f"Intentando eliminar producto {product_id} para usuario {user_id}")
 
         # Encontrar el producto
         product = Productos.query.get(product_id)
@@ -376,42 +478,7 @@ def delete_product(product_id):
         return jsonify({"error": str(e)}), 500
 
 
-# -----FUNCION DEL FIREBASE PARA REGISTAR LOS PRODCUTOS DEL INVENTARIO-------------
-
-# Función para enviar notificación FCM
-def send_low_stock_notification(user_id, product_name, quantity):
-    try:
-        # Obtener el token del dispositivo del usuario
-        device = DeviceToken.query.filter_by(user_id=user_id).first()
-        
-        if not device or not device.token:
-            print(f"No hay token de dispositivo para el usuario {user_id}")
-            return False
-            
-        # Firebase Admin SDK ya debería estar inicializado en app.py
-        from firebase_admin import messaging
-        
-        # Crear mensaje
-        message = messaging.Message(
-            notification=messaging.Notification(
-                title="¡Alerta de inventario bajo!",
-                body=f"El producto '{product_name}' tiene {quantity} unidades restantes."
-            ),
-            token=device.token,
-        )
-        
-        # Enviar mensaje
-        response = messaging.send(message)
-        print(f"Notificación enviada correctamente: {response}")
-        return True
-        
-    except Exception as e:
-        print(f"Error al enviar notificación: {str(e)}")
-        return False
-
-#----------ACTUALIZA PRODUCTOS DE LA BASE DE DATOS DESDE EL PANEL--------------------
-
-# Modificar la ruta de actualización de producto
+# -------------ACTUALIZA PRODUCTO DESDE EL PANEL----------------------------------------
 @upload.route("/update-product/<int:product_id>", methods=['PUT'])
 @jwt_required()
 def update_product(product_id):
@@ -420,65 +487,64 @@ def update_product(product_id):
         user_id = get_jwt_identity()
         if isinstance(user_id, str) and user_id.isdigit():
             user_id = int(user_id)
-        
+
         # Obtener datos de la solicitud
         data = request.get_json()
         if not data:
             return jsonify({"error": "No se proporcionaron datos para actualizar"}), 400
-            
+
         # Encontrar el producto
         product = Productos.query.get(product_id)
-        
+
         if not product:
             return jsonify({"error": "Producto no encontrado"}), 404
-            
+
         # Verificar que el producto pertenece al usuario actual
         if product.user_id != user_id:
             return jsonify({"error": "No tienes permiso para modificar este producto"}), 403
-            
+
         # Actualizar los campos del producto
         if 'product_name' in data:
             product.product_name = data['product_name']
-            
+
         if 'price_per_unit' in data:
             product.price_per_unit = float(data['price_per_unit'])
-            
+
         if 'description' in data:
             product.description = data['description']
-            
+
         # Si se actualiza la cantidad y es baja, enviar notificación
         if 'quantity' in data:
             new_quantity = int(data['quantity'])
             product.quantity = new_quantity
-            
+
             # Verificar si la cantidad es baja (5 o menos)
             if new_quantity <= 5:
                 # Enviar notificación
                 send_low_stock_notification(
-                    user_id, 
-                    product.product_name, 
+                    user_id,
+                    product.product_name,
                     new_quantity
                 )
-            
+
         if 'image_url' in data:
             product.image_url = data['image_url']
-            
+
         # Guardar los cambios
         db.session.commit()
-        
+
         return jsonify({
             "message": "Producto actualizado correctamente",
             "product": product.serialize()
         }), 200
-        
+
     except Exception as e:
         db.session.rollback()
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+
 # --------TRAE LA INFORMACION DEL INVENTARIO AL PANEL DEL INVENTARIO (PAGE)-------------------
-
-
 @upload.route("/get-user-products", methods=['GET'])
 @jwt_required()
 def get_user_products():
@@ -497,9 +563,8 @@ def get_user_products():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 # -------------ACTUALIZA LA IMAGEN DEL PRODUCTO DESDE EL PANEL--------------------------------
-
-
 @upload.route("/upload-product-image", methods=['POST'])
 @jwt_required()
 def upload_product_image():
@@ -532,14 +597,7 @@ def upload_product_image():
     return jsonify({"error": "Tipo de archivo no permitido"}), 400
 
 
-def allowed_file(filename):
-    """Verifica si el archivo tiene una extensión permitida"""
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-# -------------ME TRAE LA INFORMACION DEL ARCHIVO (EXCEL) INVENTARIO PARA MOSTRARLA EN MI PANEL------------------
-
+# ------------ME TRAE LA INFORMACION DEL ARCHIVO (EXCEL) INVENTARIO PARA MOSTRARLA EN MI PANEL------------
 @upload.route("/current-inventory-info", methods=['GET'])
 @jwt_required()
 def get_current_inventory_info():
@@ -555,22 +613,19 @@ def get_current_inventory_info():
             return jsonify({"message": "No se encontró ningún inventario"}), 404
 
         # Extraer el nombre del archivo de la URL
-        import os
         from urllib.parse import urlparse, unquote
 
         url_path = urlparse(latest_file.url).path
         filename = os.path.basename(unquote(url_path))
 
         # Si el nombre tiene timestamp, intentar extraerlo
-        import re
         timestamp_match = re.search(r'(\d{14})_', filename)
         last_updated = None
 
         if timestamp_match:
             timestamp_str = timestamp_match.group(1)
-            from datetime import datetime
             try:
-                last_updated = datetime.strptime(
+                last_updated = datetime.datetime.strptime(
                     timestamp_str, "%Y%m%d%H%M%S").isoformat()
             except ValueError:
                 pass
@@ -588,37 +643,3 @@ def get_current_inventory_info():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-# -------------CONFIGURACION DE TIGRIS DATA BASE--------------------------------
-
-
-def upload_to_tigris_s3(file_path, file_name):
-    try:
-        try:
-            s3.head_bucket(Bucket=BUCKET_NAME)
-        except:
-            s3.create_bucket(Bucket=BUCKET_NAME)
-
-        import datetime
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        unique_filename = f"{timestamp}_{file_name}"
-
-        s3.upload_file(
-            file_path,
-            BUCKET_NAME,
-            unique_filename,
-            ExtraArgs={
-                'ContentType': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            }
-        )
-
-        url = s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': BUCKET_NAME, 'Key': unique_filename},
-            ExpiresIn=3600 * 24 * 7
-        )
-
-        return url
-
-    except Exception as e:
-        raise Exception(f"Error al subir a Tigris S3: {str(e)}")

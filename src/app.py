@@ -17,6 +17,22 @@ from api.Routes.store_routes import store
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+# CONFIGURACIÓN DE FIREBASE
+basedir = os.path.abspath(os.path.dirname(__file__))
+cred_path = os.path.join(basedir, "config", "serviceAccountKey.json")
+
+# Para depuración
+print(f"Buscando archivo de credenciales en: {cred_path}")
+print(f"El archivo existe: {os.path.exists(cred_path)}")
+
+# Inicializar Firebase Admin SDK
+try:
+    cred = credentials.Certificate(cred_path)
+    firebase_admin.initialize_app(cred)
+    print("Firebase Admin SDK inicializado correctamente")
+except Exception as e:
+    print(f"Error al inicializar Firebase Admin SDK: {str(e)}")
+
 # CREAR LA INSTANCIA DE LA APLICACIÓN FLASK
 app = Flask(__name__)
 
@@ -91,12 +107,3 @@ if __name__ == '__main__':
     # OBTENER EL PUERTO DE LA VARIABLE DE ENTORNO O USAR EL VALOR PREDETERMINADO 3001
     PORT = int(os.environ.get('PORT', 3001))
     app.run(host='0.0.0.0', port=PORT, debug=True)
-
-
-# Obtener la ruta absoluta al archivo de credenciales
-current_dir = os.path.dirname(os.path.abspath(__file__))
-service_account_path = os.path.join(current_dir, 'config', 'serviceAccountKey.json')
-
-# Inicializar Firebase Admin SDK
-cred = credentials.Certificate(service_account_path)
-firebase_admin.initialize_app(cred)
