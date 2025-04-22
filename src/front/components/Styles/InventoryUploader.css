@@ -7,8 +7,8 @@
   width: 50vh;
   height: 50vh;
   border-radius: 30px;
-  background: #c9c5c5;
-  box-shadow: 4px 4px 10px #2f45566f;
+  background: var(--bg2);
+  box-shadow: 4px 4px 10px var(--shadow);
 }
 
 .inventary_btn {
@@ -16,7 +16,7 @@
 }
 
 .inventary {
-  color: #2f4556;
+  color: var(--text);
   all: unset;
   background: none;
   font-size: 14px;
@@ -34,6 +34,6 @@
 }
 .inventary:active {
   background: none;
-  color: #2f4556;
+  color: var(--text);
   transition: all 0.3s ease;
 }

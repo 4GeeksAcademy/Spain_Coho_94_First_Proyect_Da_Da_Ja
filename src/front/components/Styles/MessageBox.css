@@ -48,7 +48,7 @@ p {
 .box-btn:hover {
   color: var(--text2);
   box-shadow: none;
-  scale: 01.1;
+  scale: 1.1;
   transition: all 0.1s ease;
 }
 

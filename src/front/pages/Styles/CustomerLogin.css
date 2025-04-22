@@ -2,241 +2,241 @@
 
 /* Contenedor principal */
 .customer-login-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.login-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text);
+  font-size: 2rem;
+}
+
+/* Contenido del login */
+.login-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 992px) {
+  .login-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Contenedor del formulario */
+.login-form-container {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border);
+  padding: 2rem;
+}
+
+/* Estilos del formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.form-control {
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+/* Checkbox personalizado */
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-input {
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.form-check-label {
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* Mensajes de estado */
+.form-error,
+.form-success {
+  padding: 0.8rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.form-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.form-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+/* Acciones del formulario */
+.form-actions {
+  margin-top: 1rem;
+}
+
+.login-button {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--accent);
+  color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.login-button:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-button:disabled {
+  background-color: var(--border);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Enlaces */
+.forgot-password,
+.register-link {
+  text-align: center;
+  color: var(--text3);
+}
+
+.forgot-password a,
+.register-link a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-password a:hover,
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+/* Sección de beneficios */
+.login-benefits {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border);
+  padding: 2rem;
+}
+
+.login-benefits h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.login-benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-benefits li {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.benefit-icon {
+  font-size: 2rem;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.benefit-text h3 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.benefit-text p {
+  margin: 0;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+/* Responsive para móviles */
+@media (max-width: 576px) {
+  .customer-login-container {
+    padding: 1rem;
   }
   
   .login-title {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--store-text);
-    font-size: 2rem;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
   }
   
-  /* Contenido del login */
-  .login-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-  
-  @media (max-width: 992px) {
-    .login-content {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  /* Contenedor del formulario */
-  .login-form-container {
-    background-color: var(--store-card);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px var(--store-shadow);
-    border: 1px solid var(--store-border);
-    padding: 2rem;
-  }
-  
-  /* Estilos del formulario */
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .form-group label {
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--store-text);
+  .login-form-container,
+  .login-benefits {
+    padding: 1.5rem;
   }
   
   .form-control {
-    padding: 0.8rem;
-    border: 1px solid var(--store-border);
-    border-radius: 4px;
-    background-color: var(--store-background);
-    color: var(--store-text);
-    font-size: 1rem;
-    transition: border-color 0.2s;
-  }
-  
-  .form-control:focus {
-    outline: none;
-    border-color: var(--store-primary);
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-  }
-  
-  /* Checkbox personalizado */
-  .form-check {
-    display: flex;
-    align-items: center;
-  }
-  
-  .form-check-input {
-    margin-right: 0.5rem;
-    cursor: pointer;
-  }
-  
-  .form-check-label {
-    color: var(--store-text);
-    cursor: pointer;
-  }
-  
-  /* Mensajes de estado */
-  .form-error,
-  .form-success {
-    padding: 0.8rem;
-    border-radius: 4px;
-    text-align: center;
-  }
-  
-  .form-error {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--store-error);
-    border: 1px solid var(--store-error);
-  }
-  
-  .form-success {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-    border: 1px solid #10b981;
-  }
-  
-  /* Acciones del formulario */
-  .form-actions {
-    margin-top: 1rem;
+    padding: 0.7rem;
   }
   
   .login-button {
-    width: 100%;
-    padding: 1rem;
-    background-color: var(--store-primary);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .login-button:hover {
-    background-color: var(--store-accent);
-    transform: translateY(-2px);
-  }
-  
-  .login-button:active {
-    transform: translateY(0);
-  }
-  
-  .login-button:disabled {
-    background-color: var(--store-border);
-    cursor: not-allowed;
-    transform: none;
-  }
-  
-  /* Enlaces */
-  .forgot-password,
-  .register-link {
-    text-align: center;
-    color: var(--store-text-light);
-  }
-  
-  .forgot-password a,
-  .register-link a {
-    color: var(--store-primary);
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .forgot-password a:hover,
-  .register-link a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Sección de beneficios */
-  .login-benefits {
-    background-color: var(--store-card);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px var(--store-shadow);
-    border: 1px solid var(--store-border);
-    padding: 2rem;
-  }
-  
-  .login-benefits h2 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: var(--store-text);
-    font-size: 1.5rem;
-    text-align: center;
-  }
-  
-  .login-benefits ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  .login-benefits li {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
+    padding: 0.8rem;
   }
   
   .benefit-icon {
-    font-size: 2rem;
-    color: var(--store-primary);
-    flex-shrink: 0;
+    font-size: 1.5rem;
   }
   
   .benefit-text h3 {
-    margin: 0 0 0.3rem 0;
-    font-size: 1.1rem;
-    color: var(--store-text);
+    font-size: 1rem;
   }
-  
-  .benefit-text p {
-    margin: 0;
-    color: var(--store-text-light);
-    line-height: 1.5;
-  }
-  
-  /* Responsive para móviles */
-  @media (max-width: 576px) {
-    .customer-login-container {
-      padding: 1rem;
-    }
-    
-    .login-title {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .login-form-container,
-    .login-benefits {
-      padding: 1.5rem;
-    }
-    
-    .form-control {
-      padding: 0.7rem;
-    }
-    
-    .login-button {
-      padding: 0.8rem;
-    }
-    
-    .benefit-icon {
-      font-size: 1.5rem;
-    }
-    
-    .benefit-text h3 {
-      font-size: 1rem;
-    }
-  }
+}

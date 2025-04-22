@@ -1,3 +1,4 @@
-Footer{
-    background-color: red;
+Footer {
+    background-color: var(--accent);
+    color: var(--text);
 }
