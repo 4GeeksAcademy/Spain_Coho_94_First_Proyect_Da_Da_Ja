@@ -54,8 +54,10 @@
 		]
 	},
 	"dependencies": {
+		"@firebase/messaging": "^0.12.17",
 		"axios": "^1.8.4",
 		"cors": "^2.8.5",
+		"firebase": "^11.6.0",
 		"jwt-decode": "^4.0.0",
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",

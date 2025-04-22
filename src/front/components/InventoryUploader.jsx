@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import './Styles/Settings.css';
+import './Styles/InventoryUploader.css';
 
 const InventoryManager = () => {
   const [file, setFile] = useState(null);
@@ -196,14 +196,14 @@ const InventoryManager = () => {
 
   return (
     <div className="option_panel">
-      <div className="inventory-manager p-4">
+      <div className="inventory-manager">
         <h1>Gestión de Inventario</h1>
         
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           {/* Botón de descarga siempre visible */}
           <button
             type="button"
-            className="p-2 bg-blue-500 text-white rounded"
+            className="down-btn"
             onClick={handleDownloadInventory}
             disabled={downloading}
           >

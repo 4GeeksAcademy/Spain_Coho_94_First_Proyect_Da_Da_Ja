@@ -2,7 +2,6 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from flask import request, jsonify, url_for, Blueprint, session
 from api.utils import generate_sitemap, APIException
 from werkzeug.utils import secure_filename
-from datetime import timedelta, datetime
 from api.models import db, User, Logo
 from flask import make_response
 from flask_cors import CORS
@@ -90,7 +89,6 @@ def signup():
 
 # RUTA PARA LOGEARSE Y CREACIÓN DE TOKEN Y COOKIE
 
-
 @api.route('/login', methods=['POST'])
 def login():
     body = request.get_json()
@@ -140,9 +138,6 @@ def logout():
     # Limpiar la sesión del usuario
     if 'user_id' in session:
         session.pop('user_id', None)
-
-    # En caso de usar flask-jwt-extended con lista negra de tokens
-    # aquí agregaríamos el token actual a la lista negra
 
     return jsonify({"message": "Sesión cerrada exitosamente"}), 200
 
@@ -272,3 +267,5 @@ def delete_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f"Error al eliminar el usuario: {str(e)}"}), 500
+    
+

@@ -1,9 +1,10 @@
+from dotenv import load_dotenv
 import os
 import datetime
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS  # IMPORTA CORS
+from flask_cors import CORS
 
 # IMPORTACIONES DEL PROYECTO
 from api.utils import APIException, generate_sitemap
@@ -11,8 +12,12 @@ from api.models import db
 from api.Routes.routes import api
 from api.Routes.upload_routes import upload
 from api.Routes.store_routes import store
+from api.Routes.customer_routes import customer
+from api.Routes.upload_logo import up_logo
 from api.admin import setup_admin
 from api.commands import setup_commands
+
+load_dotenv()
 
 # CREAR LA INSTANCIA DE LA APLICACIÓN FLASK
 app = Flask(__name__)
@@ -20,12 +25,15 @@ app = Flask(__name__)
 # Registra el Blueprint con el prefijo de URL
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(upload, url_prefix='/upload')
-app.register_blueprint(store, url_prefix='/api')  # Registrar el nuevo Blueprint
+app.register_blueprint(store, url_prefix='/api/store')
+app.register_blueprint(customer, url_prefix='/api/customer')
+
 
 # CONFIGURACIÓN CORS: PERMITIR MÚLTIPLES ORÍGENES SI ES NECESARIO
 CORS(app, supports_credentials=True)
 CORS(app, resources={r"/upload/*": {"origins": "*"}})
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/api/store/*": {"origins": "*"}})
 
 # CONFIGURACIÓN DEL ENTORNO: USAR "DEVELOPMENT" SI FLASK_DEBUG ESTÁ ACTIVADO
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -80,7 +88,7 @@ def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
         path = 'index.html'
     response = send_from_directory(static_file_dir, path)
-    response.cache_control.max_age = 0  # EVITAR CACHÉ
+    response.cache_control.max_age = 0
     return response
 
 # EJECUTAR LA APLICACIÓN SI EL ARCHIVO ES EJECUTADO DIRECTAMENTE

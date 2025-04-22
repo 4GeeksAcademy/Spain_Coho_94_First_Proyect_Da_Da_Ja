@@ -1,103 +1,177 @@
-
 .nav-content {
-  background: var(--primary);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   width: 100%;
   max-width: 100%;
   height: 140px;
   padding: 0 20px;
+  margin-top: 30px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   position: relative;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  box-shadow: 3px 3px 20px var(--shadow);
+  background-color: var(--bg);
   z-index: 1100;
 }
 
-.logo{
-  background: none;
-  
+.nav-content::after {
+  content: '';
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 1px;
+  background-color: var(--border);
+  z-index: -1;
 }
 
-/*--------BUTTONS------*/
+.nav-left,
+.nav-center,
+.nav-right {
+  margin-top: 30px;
+  background-color: transparent;
+  display: flex;
+}
 
-.nav_buttons {
-  background: none;
-  outline: none;
-  margin-top: 10px;
-  margin-left: 20px;
+.nav-left {
+  margin-left: 8vh;
+  align-items: center;
+
+}
+
+.nav-right {
+  padding-bottom: 4vh;
+  margin-right: 2vh;
+  align-items: center;
+}
+
+.nav-center {
+  justify-content: center;
+  position: absolute;
+  transform: translateX(35%);
+}
+
+.logo-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 8vh;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid var(--text);
+  overflow: hidden;
+  background: white;
+  z-index: 5;
   display: flex;
   align-items: center;
-  gap: 15px;
+  justify-content: center;
 }
-.nav_buttons button{
+
+.logo-img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  transform: translate(-1%, 0%);
+}
+
+.nav-btn {
   all: unset;
-  font-weight: bold;
   font-size: 18px;
-  padding: 5px 5px;
-  color: white;
-  transition: all 0.3s ease;
-}
-.nav_buttons button:hover {
-  scale: 1.1;
+  padding: 5px 15px;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-/*--------BUTTONS------*/
+.nav-btn:hover {
+  transform: scale(1.1);
+}
 
+/* Nuevo estilo para el botón de tema */
+.theme-btn {
+  margin: 0 15px;
+}
 
-/* Contenedor para el saludo y botón de logout */
-.user-greeting {
+.user-info {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-left: 15px;
-  position: relative;
-  min-width: 120px;
+  padding: 0 20px;
 }
 
-/* Texto de saludo */
-.greeting-text {
-  font-weight: 500;
+/* Contenedor para el saludo y el botón de cerrar sesión */
+
+.user-logout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.8vh;
+  background-color: transparent;
+}
+.welcome-text {
+  background-color: transparent;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2vh;
+  text-align: center;
+}
+
+.user-login {
+  display: flex;
+  background-color: transparent;
   font-size: 14px;
-  color: var(--text-primary, #333);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
+  color: var(--text2);
 }
 
-/* Enlace de logout */
-.logout-link {
-  background: none;
-  border: none;
-  font-size: 12px;
-  color: var(--text-secondary, #666);
-  cursor: pointer;
-  padding: 2px 0;
-  text-align: right;
-  text-decoration: underline;
-}
-
-.logout-link:hover {
-  color: var(--accent, #ff0000);
-}
-
-/* Para móviles, ajustar el diseño responsivo */
+/* Style Responcive*/
 @media (max-width: 768px) {
   .nav-content {
     flex-direction: column;
+    height: auto;
+    padding: 20px;
   }
-  
-  .nav_buttons {
-    margin-top: 10px;
+
+  .nav-left,
+  .nav-right {
+    flex: none;
     width: 100%;
     justify-content: center;
-    flex-wrap: wrap;
+    margin-bottom: 15px;
   }
   
-  .user-greeting {
-    margin: 10px 0;
+  .nav-center {
+    position: relative;
+    left: auto;
+    transform: none;
+    margin: 20px 0;
+  }
+  
+  .logo-wrapper {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 0 auto;
+  }
+
+  .nav-btn {
+    padding: 10px 15px;
+    text-align: center;
+  }
+
+  .welcome-text {
+    margin-right: 0;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .user-info {
     align-items: center;
-    width: 100%;
   }
 }

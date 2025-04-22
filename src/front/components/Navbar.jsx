@@ -1,84 +1,134 @@
 import { useNavigate, Link } from "react-router-dom";
 import "./Styles/Navbar.css";
-import LogoFrame from "./Logo";
 import { useTheme } from '../Contexts/ThemeContext.jsx';
 import { useState, useEffect } from "react";
+
+// URLs para los logos según el tema
+const LIGHT_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Logo.png?raw=true";
+const DARK_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Dark.png?raw=true";
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
-  // Manejo reactivo del estado de login
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("access_token"));
+  const [userName, setUserName] = useState("");
 
-  // FUNCION DEL BOTON LOGOUT
-  const LogoutButton = () => {
-    localStorage.removeItem("access_token");
-    console.log('Token eliminado:', localStorage.getItem("access_token")); // aviso en consola del token eliminado
-    setIsLoggedIn(false); // Actualiza el estado después de hacer logout
-    navigate("/login");
+  // Logo segun el tema actual
+  const currentLogo = theme === "light" ? LIGHT_THEME_LOGO : DARK_THEME_LOGO;
+
+  // Función para obtener el nombre del usuario
+  const getUserName = () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+      if (userData.firstname) {
+        return userData.firstname;
+      }
+      return "";
+    } catch (error) {
+      console.error("Error al obtener el nombre del usuario:", error);
+      return "";
+    }
   };
 
-  // Monitorear cambios en localStorage y actualizar el estado
+  // -----------------------BOTON LOGOUT-------------------------
+  const handleLogout = () => {
+
+    const currentTheme = localStorage.getItem('userTheme');
+
+    // Limpiar datos de sesión
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("userData");
+
+    // Restaurar el tema guardado
+    if (currentTheme) {
+      localStorage.setItem('userTheme', currentTheme);
+    }
+
+    setIsLoggedIn(false);
+    navigate("/home");
+  };
+
   useEffect(() => {
     const checkLoginStatus = () => {
-      // Actualiza el estado de login directamente desde localStorage
-      setIsLoggedIn(!!localStorage.getItem("access_token"));
+      const hasToken = !!localStorage.getItem("access_token");
+      setIsLoggedIn(hasToken);
+
+      if (hasToken) {
+        setUserName(getUserName());
+      } else {
+        setUserName("");
+      }
     };
 
-    // Inicializa el estado al cargar el componente
     checkLoginStatus();
 
-    // Escuchar cambios en localStorage
+    // Escuchar eventos de cambio de almacenamiento
     window.addEventListener("storage", checkLoginStatus);
-    
-    // Limpiar el listener cuando el componente se desmonte
+    window.addEventListener("userLoggedIn", checkLoginStatus);
+    window.addEventListener("userLoggedOut", checkLoginStatus);
+
     return () => {
       window.removeEventListener("storage", checkLoginStatus);
+      window.removeEventListener("userLoggedIn", checkLoginStatus);
+      window.removeEventListener("userLoggedOut", checkLoginStatus);
     };
-  }, []); // Solo se ejecuta una vez al montar el componente
+  }, []);
 
   return (
     <nav>
       <div className="nav-content">
-        <div className="logo">
-          <LogoFrame />
+
+        {/* el logo */}
+        <div className="nav-left">
+          <div className="logo-wrapper">
+            <img
+              src={currentLogo}
+              alt="Logo"
+              className="logo-img"
+            />
+          </div>
         </div>
 
-        <div className="nav_buttons">
-          {!isLoggedIn && (
-            <>
-              <Link to="/" className="nav-btn">Register</Link>
-              <Link to="/login" className="nav-btn">Login</Link>
-            </>
-          )}
+        {/* A la izquierda los botones de navegación */}
+        <div className="nav-center">
           <Link to="/home" className="nav-btn">Home</Link>
-          
-          {isLoggedIn && (
-            <>
-              <Link to="/inventory" className="nav-btn">Inventario</Link>
-              <Link to="/admin/store-settings" className="nav-btn">Datos del Comercio</Link>
-              <Link to="/cart" className="nav-btn">Cart</Link>
-              <button className="nav-btn logout-btn" onClick={LogoutButton}>Cerrar sesión</button>
-            </>
-          )}
-          
-          {/* BOTÓN DE CAMBIO DE TEMA */}
-          <button
-            onClick={toggleTheme}
-            className="nav-btn theme-btn"
-            style={{
-              backgroundColor: "var(--primary)",
-              color: "white",
-              borderRadius: "5px",
-              padding: "5px 10px",
-            }}
-          >
+
+          <Link to="/inventory" className="nav-btn">Inventario</Link>
+          <Link to="/store-settings" className="nav-btn">Datos del Comercio</Link>
+          <Link to="/Profile" className="nav-btn">Menu</Link>
+
+
+        </div>
+
+        {/* A la derecha los botones del usuario */}
+        <div className="nav-right">
+          <button onClick={toggleTheme} className="nav-btn theme-btn">
             {theme === "light" ? "Oscuro" : "Claro"}
           </button>
+
+          <div className="user-login">
+            {!isLoggedIn ? (
+              <>
+                <Link to="/" className="nav-btn">Register</Link>
+                <Link to="/login" className="nav-btn">Login</Link>
+              </>
+            ) : (
+              <div className="user-logout-container">
+                {userName && (
+                  <span className="welcome-text">¡Hola, {userName}!</span>
+                )}
+                <button className="nav-btn" onClick={handleLogout}>
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+          </div>
         </div>
+
       </div>
     </nav>
   );
 };
+
 export default Navbar;

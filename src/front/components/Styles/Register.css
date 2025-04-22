@@ -1,116 +1,106 @@
-/*_______________MENU__LOGIN______________*/
-* {
-  box-sizing: border-box;
-}
-
 .register {
+  background-color: transparent;
+  color: var(--text);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 2rem;
   min-height: 100vh;
-  padding: 10px;
-  position: relative;
 }
 
 .reg-form-content {
-  display: block;
-  width: clamp(280px, 90%, 400px);
-  padding: clamp(1em, 2vw, 2em);
-  border-radius: 20px;
-  color: var(--text2); 
-  background: var(--primary); 
-  box-shadow: 0px 0px 16px var(--shadow); 
+  background: transparent;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.reg-title {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.reg-field {
   position: relative;
 }
 
-/*__________AREA_PARA_ESCRIBIR_____________*/
-
-.reg-form-control {
-  border: 2px solid;
-  border-color: var(--border);
-  padding: 10px;
-  outline: none;
-  border-radius: 20px;
-  margin-bottom: 3px;
-  background: #acc6cd;
-}
-
-.reg-form-control:focus,
-.reg-form-control:active {
-  background: #acc6cd;
-  border-color: var(--border-hover);
-  outline: none;
-  box-shadow: none;
-  border-radius: 20px;
-}
-
-/* Corrige el color del fondo cuando el navegador autocompleta */
-.reg-form-control:-webkit-autofill,
-.reg-form-control:-webkit-autofill:hover,
-.reg-form-control:-webkit-autofill:focus,
-.reg-form-control:-webkit-autofill:active {
-  background: #acc6cd !important;
-  -webkit-box-shadow: 0 0 0px 1000px #acc6cd inset !important;
-  color: #2f4556 !important;
-  
-}
-
-/*__________TEXTO_____________*/
-.reg-form-label,
-.reg-label-content {
-  color: var(--text2); 
-  background: none;
-  display: block;
-  margin-bottom: 10px;
-  padding-left: 15px;
-}
-
-.reg-form-label {
-  display: inline-block;
-  margin-top: 10px;
-}
-
-/*________BUTTON___SUBMIT______________*/
-.reg-btn {
-  all:unset;
+.reg-field input {
   width: 100%;
-  max-width: 160px;
-  display: block;
-  border-radius: 20px;
-  margin: 20px auto 0;
-  color: white;
-  background: none; 
-  box-shadow: 3px 3px 10px var(--shadow); 
+  padding: 6px; 
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--text);
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
+.reg-field input:focus {
+  border-bottom-color: var(--text);
+}
+
+.reg-field label {
+  position: absolute;
+  top: 8px;
+  padding-bottom: 1px;
+  padding-top: 3px;
+  left: 0;
+  font-size: 1rem;
+  color: var(--text, #888);
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.reg-field input:focus + label,
+.reg-field input:not(:placeholder-shown) + label,
+.reg-field input:valid + label {
+  top: -25px;
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.reg-btn {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
 .reg-btn:hover {
-  color: white;
-  box-shadow: 3px 3px 10px var(--shadow); 
-  background: var(--primary); 
-  border-color: var(--border); 
+  background-color: var(--border2);
 }
 
-.reg-btn:active {
-  color: white;
-  background: var(--primary); 
-  box-shadow: 3px 3px 10px var(--shadow); 
-  border-color: var(--border); 
-  transform: scale(0.95);
+.login-link {
+  font-size: 14px;
+  margin-left:  3rem;
+  color: var(--text);
 }
 
-/*_______________RESPONCIVE______________*/
-@media (min-width: 480px) {
-  .reg-form-content {
-    max-width: 350px;
-    padding: 1.5em;
-  }
+
+/* AUTOFILL: evitar fondo por defecto del navegador */
+.reg-field input:-webkit-autofill,
+.reg-field input:-webkit-autofill:hover,
+.reg-field input:-webkit-autofill:focus,
+.reg-field input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
-@media (min-width: 768px) {
-  .reg-form-content {
-    max-width: 400px;
-    padding: 2em;
-  }
+.reg-field input:-moz-autofill {
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+  -moz-text-fill-color: var(--text) !important;
 }
 
-/*_______________RESPONCIVE______________*/
+
+
+

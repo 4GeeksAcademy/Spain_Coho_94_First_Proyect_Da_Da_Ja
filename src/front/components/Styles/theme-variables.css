@@ -1,0 +1,61 @@
+/* Tema claro (predeterminado) */
+:root {
+  --primary: #f8f5f0;         
+  --secondary: #f0ebe0;        
+  --text: #5a4a41;     
+  --text2: #8a6e62;            
+  --text3: #a08d80;         
+  --accent: #90765e;          
+  --accent-hover: #7d6552;     
+  --border: #baa89a;         
+  --border2: #c5b8ad;         
+  --border-hover: #8a7a6d;     
+  --shadow: rgba(84, 72, 58, 0.1); 
+  --bg: #e8e2d5;              
+  --bg2: #d6cbbe;            
+  --error: rgba(147, 70, 70, 0.8); 
+  --success: #6b9e6d;         
+  --warning: #c29848;         
+  --card-bg: #f7f4ee;          
+  --input-bg: #f2ede4;         
+  --button-bg: #9c8979;       
+  --button-text: #f8f5f0;      
+  --navbar-height: 140px;      
+  --sidebar-width: 240px;     
+  --transition-speed: 0.3s;    
+
+  --selection-bg: #d6cbbe;     
+  --selection-color: #5a4a41;  
+}
+
+/* Tema oscuro - se mantiene igual */
+[data-theme="dark"] {
+  --primary: #1e1e1e;
+  --secondary: #292929;
+  --text: #c2c0b6;
+  --text2: #cccccc;
+  --text3: #898888;
+  --accent: #191a1b;
+  --accent-hover: #7aa3e8;
+  --border2: #41413e;
+  --border: #000000;
+  --border-hover: #7e7d7d;
+  --shadow: rgba(1, 1, 1, 0.5);
+  --bg: linear-gradient(to top, #0f0f0f, #4a3e3e, #2a2a2a, #3a3a3a);
+  --bg2: rgba(208, 205, 205, 0.498);
+  --error: rgba(147, 70, 70, 0.784);
+  --success: #66bb6a;
+  --warning: #d98a00;
+  --card-bg: #1e1e1e;
+  --input-bg: #292929;
+  --button-bg: #5d8cd5;
+  --button-text: #ffffff;
+  
+  --selection-bg: #555555; 
+  --selection-color: #ffffff; 
+}
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-color);
+}

@@ -13,7 +13,7 @@ import json
 load_dotenv()
 
 # Blueprint para manejo de logos
-up_logo = Blueprint('up_logo', __name__)
+up_logo = Blueprint('logo_upload', __name__)
 
 # Configuración de AWS/Tigris
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -30,7 +30,6 @@ LOGO_FOLDER = "logo"
 os.makedirs(LOGO_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
-  
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'}
     
     # Si no hay nombre de archivo, no es válido
@@ -58,9 +57,6 @@ def allowed_file(filename):
     return is_allowed
 
 def upload_to_s3(file_path, filename, user_id):
-    """
-    Sube un archivo a TigrisDB (compatible con S3) y devuelve una URL prefirmada
-    """
     try:
         # Crear cliente de S3
         s3 = boto3.client(
@@ -103,8 +99,8 @@ def upload_to_s3(file_path, filename, user_id):
         print(f"Error en upload_to_s3: {str(e)}")
         raise e
 
-# Ruta para subir logo
-@up_logo.route('/api/post_logo', methods=['POST'])
+# Ruta para subir logo - nombre de endpoint sin puntos
+@up_logo.route('/api/post_logo', methods=['POST'], endpoint='logo_upload_endpoint')
 @jwt_required()
 def upload_logo():
     user_id = get_jwt_identity()
@@ -181,7 +177,7 @@ def upload_logo():
         return jsonify({"error": str(e)}), 500
 
 # Ruta para refrescar URL prefirmada del logo
-@up_logo.route('/api/refresh_logo_url', methods=['GET'])
+@up_logo.route('/api/refresh_logo_url', methods=['GET'], endpoint='logo_refresh_endpoint')
 @jwt_required()
 def refresh_logo_url():
     user_id = get_jwt_identity()

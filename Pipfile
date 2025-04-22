@@ -25,6 +25,7 @@ flask = "*"
 pandas = "*"
 openpyxl = "*"
 tigrisdb = "*"
+firebase-admin = "*"
 
 [requires]
 python_version = "3.13"

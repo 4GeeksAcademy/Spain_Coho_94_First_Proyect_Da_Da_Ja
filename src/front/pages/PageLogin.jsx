@@ -1,20 +1,12 @@
-import React, { useEffect } from "react"
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import Login from "../components/Login.jsx";
-import './Styles/PageLogin.css'
-  
+import React from 'react';
+import Login from '../components/Login';
 
-
- const PageLogin = () => {
-
-	return (
-
-		<div className="log-content">
-			<Login/>
-		</div>
-
-
-	);
-}; 
+const PageLogin = () => {
+  return (
+    <div className="container">
+      <Login />
+    </div>
+  );
+};
 
 export default PageLogin;
