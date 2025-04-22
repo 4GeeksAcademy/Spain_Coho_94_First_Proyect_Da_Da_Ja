@@ -38,7 +38,7 @@ CORS(app, resources={r"/api/store/*": {"origins": "*"}})
 # CONFIGURACIÓN DEL ENTORNO: USAR "DEVELOPMENT" SI FLASK_DEBUG ESTÁ ACTIVADO
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
-    os.path.realpath(__file__)), '../public/')
+    os.path.realpath(__file__)), '../dist/')
 
 # CONFIGURACIÓN DE LA BASE DE DATOS
 db_url = os.getenv("DATABASE_URL")
