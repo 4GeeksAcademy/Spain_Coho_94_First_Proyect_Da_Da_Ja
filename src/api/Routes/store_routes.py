@@ -1,7 +1,7 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
-from api.models import db, User, Logo
+from api.models import db, User, Logo, Shop, Productos
 from flask_cors import CORS
 import uuid
 import re
@@ -35,6 +35,96 @@ def generate_store_url(store_name):
 
     return slug
 
+@store.route('/<string:store_name>', methods=['GET'])
+def get_store_details(store_name):
+    """
+    Obtiene los detalles de una tienda por su nombre, 
+    incluyendo información del usuario e información de productos
+    """
+    # Buscar la tienda por nombre
+    shop = Shop.query.filter_by(storename=store_name).first()
+    
+    if not shop:
+        return jsonify({"error": "Tienda no encontrada"}), 404
+    
+    # Obtener el usuario asociado a la tienda
+    user = shop.user
+    
+    # Obtener los productos del usuario
+    products = Productos.query.filter_by(user_id=user.id).all()
+    
+    
+    
+    # Preparar la respuesta
+    store_details = {
+        "store": shop.serialize(),
+        "user": user.serialize(),
+        "products": [product.serialize() for product in products],
+    }
+    
+    return jsonify(store_details), 200
+
+@store.route('/create-store', methods=['POST'])
+@jwt_required()
+def create_store():
+    """
+    Crea una nueva tienda para el usuario autenticado
+    """
+    user_id = get_jwt_identity()
+    
+    # Buscar el usuario
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    # Obtener datos del request
+    data = request.get_json()
+    
+    # Validar datos requeridos
+    required_fields = ['storename', 'storeemail', 'description', 'phone', 'bankaccount', 'theme', 'shopurl']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo {field} es requerido"}), 400
+    
+    # Verificar si ya existe una tienda con ese nombre o email
+    existing_shop_name = Shop.query.filter_by(storename=data['storename']).first()
+    existing_shop_email = Shop.query.filter_by(storeemail=data['storeemail']).first()
+    
+    if existing_shop_name:
+        return jsonify({"error": "Ya existe una tienda con este nombre"}), 400
+    
+    if existing_shop_email:
+        return jsonify({"error": "Ya existe una tienda con este correo electrónico"}), 400
+    
+    try:
+        # Crear nueva tienda
+        new_store = Shop(
+            storename=data['storename'],
+            storeemail=data['storeemail'],
+            description=data['description'],
+            phone=data['phone'],
+            bankaccount=data['bankaccount'],
+            theme=data['theme'],
+            shopurl=data['shopurl'],
+            logourl=data['logourl'],
+            user_id=user_id
+        )
+        
+        # Añadir y commitear a la base de datos
+        db.session.add(new_store)
+        db.session.commit()
+        
+        return jsonify({
+            "message": "Tienda creada exitosamente", 
+            "store": new_store.serialize()
+        }), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al crear la tienda", "details": str(e)}), 500
+    
+
+
 
 @store.route('/store-info', methods=['GET'])
 @jwt_required()
@@ -46,26 +136,26 @@ def get_store_info():
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
-    
+    # Buscar la tienda del usuario
+    shop = Shop.query.filter_by(user_id=user_id).first()
+    if not shop:
+        return jsonify({"error": "El usuario no tiene una tienda creada"}), 404
+
+    # Buscar el logo del usuario
     logo = Logo.query.filter_by(user_id=user_id).first()
-    logo_url = logo.image_logo_url if logo else None
+    logo_url = logo.logo_url if logo else None
 
-    
-    if not hasattr(user, 'store_slug') or not user.store_slug:
-        user.store_slug = generate_store_url(
-            user.shopname or f"tienda-{user_id}")
-        db.session.commit()
-
-    
+    # Preparar la información de la tienda
     store_info = {
-        "store_name": user.shopname or "",
-        "store_description": getattr(user, 'store_description', ""),
-        "bank_account": getattr(user, 'bank_account', ""),
-        "store_slug": getattr(user, 'store_slug', ""),
-        "contact_email": user.email,
-        "contact_phone": getattr(user, 'contact_phone', ""),
+        "storename": shop.storename,
+        "storeemail": shop.storeemail,
+        "description": shop.description,
+        "phone": shop.phone,
+        "bankaccount": shop.bankaccount,
+        "theme": shop.theme,
+        "shopurl": shop.shopurl,
         "logo_url": logo_url,
-        "theme": getattr(user, 'theme', "default")
+        "contact_email": user.email
     }
 
     return jsonify(store_info), 200

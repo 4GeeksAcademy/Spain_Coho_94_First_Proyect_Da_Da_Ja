@@ -313,7 +313,7 @@ const ProductView = () => {
       <footer className="store-footer">
         <p>&copy; {new Date().getFullYear()} {storeData.store_name}. Todos los derechos reservados.</p>
         <p className="powered-by">
-          Creado con ❤️ usando la plataforma de comercio electrónico
+          Creado con amor usando la plataforma de comercio electrónico
         </p>
       </footer>
     </div>
