@@ -12,6 +12,7 @@ from api.models import db
 from api.Routes.routes import api
 from api.Routes.upload_routes import upload
 from api.Routes.store_routes import store
+from api.Routes.upload_logo import up_logo  # Importación del nuevo blueprint
 from api.admin import setup_admin
 from api.commands import setup_commands
 
@@ -20,16 +21,17 @@ load_dotenv()
 # CREAR LA INSTANCIA DE LA APLICACIÓN FLASK
 app = Flask(__name__)
 
-
 # Registra el Blueprint con el prefijo de URL
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(upload, url_prefix='/upload')
-app.register_blueprint(store, url_prefix='/api') 
+app.register_blueprint(store, url_prefix='/api/store')
+
 
 # CONFIGURACIÓN CORS: PERMITIR MÚLTIPLES ORÍGENES SI ES NECESARIO
 CORS(app, supports_credentials=True)
 CORS(app, resources={r"/upload/*": {"origins": "*"}})
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/api/store/*": {"origins": "*"}})
 
 # CONFIGURACIÓN DEL ENTORNO: USAR "DEVELOPMENT" SI FLASK_DEBUG ESTÁ ACTIVADO
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"

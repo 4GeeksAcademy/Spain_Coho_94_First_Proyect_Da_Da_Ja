@@ -1,0 +1,198 @@
+/* Catalog.css - Estilos para el catálogo de productos */
+
+/* Contenedor principal del catálogo */
+.catalog-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .catalog-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--store-text);
+    font-size: 2rem;
+  }
+  
+  /* Controles del catálogo (búsqueda y filtros) */
+  .catalog-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .search-form {
+    display: flex;
+    flex: 1;
+    min-width: 250px;
+    max-width: 500px;
+  }
+  
+  .search-input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--store-border);
+    border-radius: 6px 0 0 6px;
+    font-size: 1rem;
+    background-color: var(--store-card);
+    color: var(--store-text);
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: var(--store-primary);
+  }
+  
+  .search-button {
+    padding: 0.7rem 1.5rem;
+    background-color: var(--store-primary);
+    color: var(--text2);
+    border: none;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+  }
+  
+  .search-button:hover {
+    background-color: var(--store-accent);
+  }
+  
+  .sort-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .sort-filter label {
+    font-size: 0.9rem;
+    color: var(--store-text-light);
+  }
+  
+  .sort-select {
+    padding: 0.7rem;
+    border: 1px solid var(--store-border);
+    border-radius: 6px;
+    background-color: var(--store-card);
+    color: var(--store-text);
+    cursor: pointer;
+    min-width: 180px;
+  }
+  
+  .sort-select:focus {
+    outline: none;
+    border-color: var(--store-primary);
+  }
+  
+  /* Contador de resultados */
+  .results-counter {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--store-text-light);
+  }
+  
+  /* Estado de carga */
+  .loading-products {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+  }
+  
+  /* Paginación */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 0.5rem;
+  }
+  
+  .page-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--store-border);
+    background-color: var(--store-card);
+    color: var(--store-text);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+  }
+  
+  .page-button:hover:not(:disabled) {
+    background-color: var(--store-primary);
+    color: var(--text2);
+    border-color: var(--store-primary);
+  }
+  
+  .page-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .page-info {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    color: var(--store-text-light);
+  }
+  
+  /* Botón para limpiar búsqueda */
+  .clear-search-btn {
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background-color: var(--store-primary);
+    color: var(--text2);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .clear-search-btn:hover {
+    background-color: var(--store-accent);
+    transform: scale(1.05);
+  }
+  
+  .clear-search-btn:active {
+    transform: scale(0.95);
+    transition: all 0.1s ease;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 768px) {
+    .catalog-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .search-form {
+      max-width: 100%;
+    }
+    
+    .sort-filter {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .sort-select {
+      flex: 1;
+    }
+    
+    .catalog-container {
+      padding: 1rem;
+    }
+    
+    .catalog-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+  }

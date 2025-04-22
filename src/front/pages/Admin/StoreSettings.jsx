@@ -7,6 +7,7 @@ const StoreSettings = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [storeData, setStoreData] = useState({
     store_name: '',
@@ -16,6 +17,7 @@ const StoreSettings = () => {
     contact_email: '',
     contact_phone: '',
     logo_url: '',
+    theme: 'default'
   });
 
   const baseUrl = import.meta.env.VITE_BACKEND_URL;
@@ -35,9 +37,12 @@ const StoreSettings = () => {
 
   const fetchStoreData = async () => {
     try {
-      // Aquí realizarías la llamada a tu API para obtener los datos de la tienda
-      // Por ahora simulamos los datos
-      const response = await axios.get(`${baseUrl}api/store-info`, {
+      // Construir la URL correctamente
+      const apiUrl = baseUrl.endsWith('/') 
+        ? `${baseUrl}api/store-info` 
+        : `${baseUrl}/api/store-info`;
+
+      const response = await axios.get(apiUrl, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -57,6 +62,7 @@ const StoreSettings = () => {
         contact_email: 'contacto@mitienda.com',
         contact_phone: '123456789',
         logo_url: '',
+        theme: 'default'
       });
     } finally {
       setLoading(false);
@@ -77,9 +83,13 @@ const StoreSettings = () => {
     setMessage({ text: '', type: '' });
 
     try {
-      // Aquí implementarías la llamada a tu API para guardar los datos
+      // Construir la URL correctamente
+      const apiUrl = baseUrl.endsWith('/') 
+        ? `${baseUrl}api/store-info` 
+        : `${baseUrl}/api/store-info`;
+      
       const response = await axios.put(
-        `${baseUrl}api/store-info`, 
+        apiUrl,
         storeData,
         {
           headers: {
@@ -106,7 +116,7 @@ const StoreSettings = () => {
     } catch (error) {
       console.error("Error al guardar los datos:", error);
       setMessage({ 
-        text: 'Error al guardar los datos. Intenta de nuevo.', 
+        text: error.response?.data?.error || 'Error al guardar los datos. Intenta de nuevo.', 
         type: 'error' 
       });
     } finally {
@@ -117,6 +127,138 @@ const StoreSettings = () => {
         setMessage({ text: '', type: '' });
       }, 5000);
     }
+  };
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    // Verificar el tipo de archivo
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      setMessage({ 
+        text: 'Solo se permiten archivos de imagen (JPG, PNG, GIF)', 
+        type: 'error' 
+      });
+      return;
+    }
+    
+    // Verificar el tamaño del archivo (máximo 1MB)
+    const maxSize = 1 * 1024 * 1024; // 1MB
+    if (file.size > maxSize) {
+      setMessage({ 
+        text: 'El archivo es demasiado grande. El tamaño máximo permitido es 1MB', 
+        type: 'error' 
+      });
+      return;
+    }
+    
+    try {
+      setUploadingLogo(true);
+      
+      // Crear FormData para enviar el archivo
+      const formData = new FormData();
+      formData.append('logo', file);
+      
+      // Usa siempre la ruta correcta con /api/store/upload-logo
+      const apiUrl = baseUrl.endsWith('/') 
+        ? `${baseUrl}store/upload-logo` 
+        : `${baseUrl}/store/upload-logo`;
+        
+      const response = await axios.post(
+        apiUrl,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.status === 200 && response.data.logo_url) {
+        // Actualizar el estado con la nueva URL del logo
+        setStoreData({
+          ...storeData,
+          logo_url: response.data.logo_url
+        });
+        
+        // Mostrar mensaje de éxito
+        setMessage({ 
+          text: 'Logo subido correctamente', 
+          type: 'success' 
+        });
+        
+        // Limpiar el mensaje después de 5 segundos
+        setTimeout(() => {
+          setMessage({ text: '', type: '' });
+        }, 5000);
+      }
+    } catch (error) {
+      console.error("Error al subir el logo:", error);
+      
+      setMessage({ 
+        text: error.response?.data?.error || 'Error al subir el logo. Intenta de nuevo.', 
+        type: 'error' 
+      });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      setUploadingLogo(true);
+      
+      // Construir la URL correctamente - asegúrate de que coincida con tu backend
+      const apiUrl = baseUrl.endsWith('/') 
+        ? `${baseUrl}api/remove-logo` 
+        : `${baseUrl}/api/remove-logo`;
+        
+      const response = await axios.delete(
+        apiUrl,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
+      );
+      
+      if (response.status === 200) {
+        // Actualizar el estado removiendo la URL del logo
+        setStoreData({
+          ...storeData,
+          logo_url: ''
+        });
+        
+        // Mostrar mensaje de éxito
+        setMessage({ 
+          text: 'Logo eliminado correctamente', 
+          type: 'success' 
+        });
+        
+        // Limpiar el mensaje después de 5 segundos
+        setTimeout(() => {
+          setMessage({ text: '', type: '' });
+        }, 5000);
+      }
+    } catch (error) {
+      console.error("Error al eliminar el logo:", error);
+      
+      setMessage({ 
+        text: error.response?.data?.error || 'Error al eliminar el logo. Intenta de nuevo.', 
+        type: 'error' 
+      });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleThemeChange = (theme) => {
+    setStoreData(prev => ({
+      ...prev,
+      theme: theme
+    }));
   };
 
   // Redirigir si no está autenticado
@@ -223,46 +365,70 @@ const StoreSettings = () => {
         <div className="form-section">
           <h2 className="section-title">Personalización</h2>
           
-          <div className="form-group">
-            <label>Logo del Comercio</label>
-            <div className="logo-preview-container">
-              {storeData.logo_url ? (
+          <div className="logo-preview-container">
+            {storeData.logo_url ? (
+              <div className="logo-with-actions">
                 <img 
                   src={storeData.logo_url} 
                   alt="Logo del comercio" 
                   className="logo-preview" 
                 />
-              ) : (
-                <div className="no-logo">No hay logo</div>
-              )}
-              
-              <div className="logo-upload">
-                <label htmlFor="logo-upload" className="upload-button">
-                  Seleccionar logo
-                </label>
-                <input 
-                  type="file" 
-                  id="logo-upload"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  className="file-input"
-                  onChange={(e) => {
-                    // Aquí implementarías la lógica para subir el logo
-                    console.log("Archivo seleccionado:", e.target.files[0]);
-                  }}
-                />
-                <small className="form-text">
-                  Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 1MB
-                </small>
+                <div className="logo-actions">
+                  <button 
+                    type="button" 
+                    className="change-logo-btn" 
+                    onClick={() => document.getElementById('logo-upload').click()}
+                    disabled={uploadingLogo}
+                  >
+                    {uploadingLogo ? "Subiendo..." : "Cambiar logo"}
+                  </button>
+                  <button 
+                    type="button" 
+                    className="remove-logo-btn" 
+                    onClick={handleRemoveLogo}
+                    disabled={uploadingLogo || saving}
+                  >
+                    Eliminar logo
+                  </button>
+                </div>
               </div>
+            ) : (
+              <div className="no-logo">
+                <div className="no-logo-placeholder">
+                  <span>Sin logo</span>
+                </div>
+                <button 
+                  type="button" 
+                  className="upload-logo-btn" 
+                  onClick={() => document.getElementById('logo-upload').click()}
+                  disabled={uploadingLogo}
+                >
+                  {uploadingLogo ? "Subiendo..." : "Subir logo"}
+                </button>
+              </div>
+            )}
+            
+            <div className="logo-upload">
+              <input 
+                type="file" 
+                id="logo-upload"
+                accept=".jpg,.jpeg,.png,.gif"
+                className="file-input"
+                onChange={handleLogoUpload}
+                disabled={uploadingLogo || saving}
+              />
+              <small className="form-text">
+                Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 1MB
+              </small>
             </div>
           </div>
           
-          <div className="form-group">
+          <div className="form-group theme-selector">
             <label>Tema de la Tienda</label>
-            <div className="theme-selector">
+            <div className="theme-options">
               <div 
                 className={`theme-option ${storeData.theme === 'default' ? 'selected' : ''}`}
-                onClick={() => setStoreData(prev => ({ ...prev, theme: 'default' }))}
+                onClick={() => handleThemeChange('default')}
               >
                 <div className="theme-preview default-theme"></div>
                 <span>Predeterminado</span>
@@ -270,7 +436,7 @@ const StoreSettings = () => {
               
               <div 
                 className={`theme-option ${storeData.theme === 'dark' ? 'selected' : ''}`}
-                onClick={() => setStoreData(prev => ({ ...prev, theme: 'dark' }))}
+                onClick={() => handleThemeChange('dark')}
               >
                 <div className="theme-preview dark-theme"></div>
                 <span>Oscuro</span>
@@ -278,7 +444,7 @@ const StoreSettings = () => {
               
               <div 
                 className={`theme-option ${storeData.theme === 'colorful' ? 'selected' : ''}`}
-                onClick={() => setStoreData(prev => ({ ...prev, theme: 'colorful' }))}
+                onClick={() => handleThemeChange('colorful')}
               >
                 <div className="theme-preview colorful-theme"></div>
                 <span>Colorido</span>
