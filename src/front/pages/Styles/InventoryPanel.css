@@ -15,8 +15,8 @@
 
 .panel-title {
   width: 100%;
-  padding-top: 20px;
-  margin: 0 0 30px 0;
+  padding-top: 5px;
+  margin: 0 0 70px 0;
   color: var(--text3);
   text-align: left;
   font-size: 1.8rem;
@@ -29,28 +29,34 @@
   flex-wrap: wrap;
   border-bottom: 1px solid var(--border);
   margin-bottom: 20px;
+  gap: 15px;
 }
 
 .tab-button {
+  position: relative;
   padding: 8px 12px;
   background: none;
-  border-style: none;
-  border-bottom: 3px solid transparent;
+  border: none;
   cursor: pointer;
   font-weight: 500;
   color: var(--text);
-  transition: all 0.3s ease;
   font-size: 0.95rem;
+  transition: color 0.3s ease;
+  text-align: center;
 }
 
 .tab-button:hover {
+  border-bottom: 3px solid transparent;
   transform: scale(1.05);
-  transition: 0.1s;
+  transition: 0.1se;
 }
 
 .tab-button.active {
-  border-bottom: 4px solid var(--text3);
-  color: var(--text3);
+  border-bottom: 3px solid var(--warning);
+
+  scale: 0.9;
+  transition: 0.1s;
+  color: var(--warning);
 }
 
 .tab-content {
@@ -101,8 +107,6 @@
   overflow-x: auto;
   background-color: var(--card);
   border-radius: 6px;
-  border-style: solid;
-  border-width: 2px;
   border-color: var(--border);
 }
 
@@ -120,8 +124,8 @@
 }
 
 .inventory-table th {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--accent);
+  color: var(--text2);
   font-weight: bold;
   white-space: nowrap;
 }
@@ -187,13 +191,13 @@
   background-color: transparent;
   border-style: solid;
   border-color: var(--border);
-  border-width: 2px;
+  border-width: 1px;
   border-radius: 6px;
   color: var(--text);
 }
 
 .edit-btn:hover {
-  background-color: var(--bg2);
+  background-color: var(--text3);
   transform: scale(1.05);
 }
 
@@ -203,16 +207,14 @@
 }
 
 .delete-btn {
-  background-color: var(--error);
-  border-style: solid;
-  border-color: var(--error);
-  border-width: 2px;
+  background-color: rgba(147, 70, 70, 0.784);
   border-radius: 6px;
   color: var(--text2);
+  
 }
 
 .delete-btn:hover {
-  background-color: var(--error);
+  background-color: rgba(157, 67, 67, 0.811);;
   border: none;
   color: white;
   transform: scale(1.05);
@@ -266,38 +268,37 @@
 
 /* Pestaña de carga de inventario */
 .upload-tab, .download-tab {
-  max-width: 100%;
+  max-width: 90%;
   margin: 0 auto;
   margin-top: 50px;
 }
 
 .upload-container, .download-container {
-  background-color: var(--bg2);
+  background-color: transparent;
   padding: 20px;
   border-radius: 8px;
   border-style: solid;
   border-color: var(--border);
   border-width: 1px;
-  box-shadow: 0 2px 4px var(--shadow);
 }
 
 .upload-container h2, .download-container h2 {
   margin-top: 0;
-  margin-bottom: 15px;
-  color: var(--text3);
+  margin-bottom: 20px;
+  color: var(--text);
   font-size: 1.3rem;
 }
 
 .upload-instructions {
   margin-bottom: 20px;
   padding: 12px;
-  background-color: rgba(0, 0, 0, 0.03);
   border-radius: 5px;
 }
 
 .upload-instructions ul {
   margin: 8px 0;
   padding-left: 20px;
+  
 }
 
 .file-selector {
@@ -307,9 +308,11 @@
 .file-input-container {
   position: relative;
   margin-bottom: 15px;
+  
 }
 
 .file-input-container input[type="file"] {
+  
   position: absolute;
   left: 0;
   top: 0;
@@ -322,19 +325,16 @@
 .file-label {
   display: block;
   padding: 12px;
-  background-color: var(--bg);
-  border: 2px dashed var(--border);
+  background-color: none;
+  width: 40%;
   border-radius: 6px;
+  border: 1px solid var(--border);
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
   font-weight: 500;
 }
 
-.file-label:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-color: var(--primary);
-}
+
 
 .file-actions {
   margin-top: 15px;
@@ -392,7 +392,13 @@
 }
 
 .download-btn:hover {
-  background-color: var(--primary-hover);
+  scale: 1.1;
+  transition: all 0.01s ease;
+  background-color: var(--primary);
+}
+.download-btn:active {
+  transform: scale(0.8);
+  transition: all 0.01s ease;
 }
 
 .template-btn {
@@ -401,54 +407,71 @@
 }
 
 .template-btn:hover {
-  background-color: #218838;
+  scale: 1.1;
+  transition: all 0.01s ease;
+  background-color: #28a745;
+}
+.template-btn:active {
+  transform: scale(0.8);
+  transition: all 0.01s ease;
 }
 
 .template-link {
   background: none;
   border: none;
-  color: var(--primary);
+  color: var(--warning);
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
-  font-weight: bold;
+  margin-left: 15px;
+  font-weight: regular;
 }
 
 .template-link:hover {
-  color: var(--primary-hover);
+  color: var(--warning);
+  scale: 1.05;
+}
+.template-link:active {
+  transform: scale(0.9);
+  transition: all 0.01s ease;
 }
 
 .action-description {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color:red;
   padding: 8px 12px;
   border-radius: 5px;
   margin-top: 12px;
   font-size: 0.85rem;
 }
-
 .action-description p {
   margin: 6px 0;
 }
 
 /* Pestaña de descarga */
-.download-options {
+
+.download-container {
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
+  border-color: var(--bg);
+ 
 }
 
 .download-option {
   flex: 1;
   min-width: 250px;
-  background-color: var(--bg);
+  background-color: none;
   padding: 15px;
   border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-color: var(--border);
+  border-style: solid;
+  border-width: 1px;
+  margin-bottom: 20px;
 }
 
 .download-option h3 {
-  margin-top: 0;
-  color: var(--primary);
+  margin-top: 7px;
+  color: var(--text);
   font-size: 1.1rem;
 }
 
@@ -461,7 +484,7 @@
 
 .empty-state-btn {
   background-color: var(--primary);
-  color: white;
+  color: var(--text3);
   border: none;
   padding: 6px 12px;
   border-radius: 4px;
@@ -472,6 +495,7 @@
 }
 
 .empty-state-btn:hover {
+  scale: 1.1;
   background-color: var(--primary-hover);
 }
 
@@ -496,6 +520,255 @@
   opacity: 0.7;
 }
 
+/* Estilos para la pestaña de añadir productos */
+
+.add-product-tab {
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 0 0 8px 8px;
+}
+
+.add-product-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--bg);
+  padding: 25px;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: var(--border);
+  border-width: 1px;
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.add-product-container h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--text3);
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.add-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-input {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.form-input:focus {
+  border-color: var(--text3);
+  outline: none;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: var(--shadow);
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.image-upload-container {
+  margin-top: 10px;
+}
+
+.image-upload-container p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.file-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 8px 12px;
+  background-color: var(--bg);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  border: 1px solid var(--border);
+}
+
+.file-input-label:hover {
+  background-color: var(--bg2);
+}
+
+.image-preview {
+  margin-top: 10px;
+}
+
+.image-preview p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.preview-img {
+  max-width: 200px;
+  max-height: 200px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.form-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-btn {
+  padding: 10px 20px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.submit-btn:disabled {
+  background-color: var(--border);
+  cursor: not-allowed;
+}
+
+/* Estilos para el botón de eliminar imagen */ 
+.input-with-clear {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.clear-image-btn, .clear-upload-btn {
+  position: absolute;
+  right: 8px;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  padding: 0;
+  transition: background-color 0.2s;
+  z-index: 2;
+}
+
+.clear-image-btn:hover, .clear-upload-btn:hover {
+ scale: 1.1;
+}
+.clear-image-btn:active, .clear-upload-btn:active {
+  transform: scale(0.9);
+  transition: all 0.1s ease;
+}
+
+.file-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.clear-upload-btn {
+  position: absolute;
+  right: -30px;
+  top: 5px;
+}
+
+/* Estilos para la vista previa de imagen */
+
+.image-preview {
+  margin-top: 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 15px;
+  background-color: transparent;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.preview-header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.remove-preview-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--error);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.remove-preview-btn:hover {
+  text-decoration: underline;
+}
+
+.preview-container {
+  display: flex;
+  justify-content: center;
+  background: transparent;
+  padding: 10px;
+  border-radius: 6px;
+
+}
+
+.preview-img {
+  max-width: 250px;
+  max-height: 200px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+
 /* Responsive */
 @media (max-width: 992px) {
   .inventory-panel {
@@ -505,11 +778,15 @@
   
   .panel-title {
     font-size: 1.6rem;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
   }
   
-  .upload-tab, .download-tab {
+  .upload-tab, .download-tab, .add-product-tab {
     margin-top: 30px;
+  }
+  
+  .add-product-container {
+    padding: 20px;
   }
 }
 
@@ -568,7 +845,7 @@
     font-size: 0.85rem;
   }
   
-  .upload-container, .download-container {
+  .upload-container, .download-container, .add-product-container {
     padding: 15px;
   }
   
@@ -580,6 +857,20 @@
     width: 100%;
     min-width: 100%;
     padding: 8px 10px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .add-product-container h2 {
+    font-size: 1.3rem;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 8px 16px;
   }
 }
 
@@ -628,7 +919,7 @@
     padding: 3px 6px;
   }
   
-  .upload-container h2, .download-container h2 {
+  .upload-container h2, .download-container h2, .add-product-container h2 {
     font-size: 1.2rem;
   }
   
@@ -642,5 +933,52 @@
   
   .download-option {
     min-width: 100%;
+  }
+  
+  .form-input, .file-input-label {
+    font-size: 0.9rem;
+  }
+  
+  .image-upload-container p, .image-preview p {
+    font-size: 0.85rem;
+  }
+  
+  .preview-img {
+    max-width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .remove-preview-btn {
+    font-size: 0.85rem;
+    padding: 2px 6px;
+  }
+  
+  .preview-container {
+    padding: 8px;
+  }
+  
+  .clear-upload-btn {
+    right: -25px;
+  }
+}
+
+@media (max-width: 576px) {
+  .preview-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .remove-preview-btn {
+    align-self: flex-end;
+  }
+  
+  .preview-img {
+    max-width: 100%;
+  }
+  
+  .clear-upload-btn {
+    top: 0;
+    right: -20px;
   }
 }

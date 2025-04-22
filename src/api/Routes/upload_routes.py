@@ -145,17 +145,8 @@ def upload_inventory():
         db.session.add(tigris_file)
         db.session.commit()
         
-        # Enviar notificaciones para productos con stock bajo
-        for product in low_stock_products:
-            send_low_stock_notification(
-                user_id,
-                product['product_name'],
-                product['quantity']
-            )
-            
-        os.remove(file_path)
         return jsonify({
-            "message": f"{len(records)} productos cargados correctamente. {len(low_stock_products)} con stock bajo.",
+            "message": f"Inventario cargado correctamente. {len(low_stock_products)} productos con stock bajo.",
             "file_url": file_url
         })
 
@@ -344,14 +335,6 @@ def update_inventory():
         db.session.add(tigris_file)
         db.session.commit()
 
-        # Enviar notificaciones para productos con stock bajo
-        for product in low_stock_products:
-            send_low_stock_notification(
-                user_id,
-                product['product_name'],
-                product['quantity']
-            )
-
         # Limpiar archivo temporal
         os.remove(file_path)
 
@@ -468,19 +451,10 @@ def update_product(product_id):
         if 'description' in data:
             product.description = data['description']
 
-        # Si se actualiza la cantidad y es baja, enviar notificación
+        # Actualizar la cantidad
         if 'quantity' in data:
             new_quantity = int(data['quantity'])
             product.quantity = new_quantity
-
-            # Verificar si la cantidad es baja (5 o menos)
-            if new_quantity <= 5:
-                # Enviar notificación
-                send_low_stock_notification(
-                    user_id,
-                    product.product_name,
-                    new_quantity
-                )
 
         if 'image_url' in data:
             product.image_url = data['image_url']
@@ -496,6 +470,72 @@ def update_product(product_id):
     except Exception as e:
         db.session.rollback()
         print(f"Error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# -------------ENDPOINT PARA AÑADIR UN PRODUCTO INDIVIDUAL AL INVENTARIO-----------------
+
+@upload.route("/add-product", methods=['POST'])
+
+@jwt_required()
+def add_product():
+    """Añade un solo producto al inventario del usuario"""
+    try:
+       
+        user_id = get_jwt_identity()
+        
+        # Verificar que el usuario existe
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        
+        # Obtener los datos del producto desde la solicitud
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({"error": "Datos no proporcionados"}), 400
+        
+        
+        required_fields = ['product_name', 'price_per_unit', 'quantity']
+        for field in required_fields:
+            if field not in data or data[field] is None:
+                return jsonify({"error": f"El campo '{field}' es requerido"}), 400
+        
+       
+        try:
+            price = float(data['price_per_unit'])
+            quantity = int(data['quantity'])
+            
+            if price < 0:
+                return jsonify({"error": "El precio no puede ser negativo"}), 400
+            if quantity < 0:
+                return jsonify({"error": "La cantidad no puede ser negativa"}), 400
+        except (ValueError, TypeError):
+            return jsonify({"error": "Formato incorrecto para precio o cantidad"}), 400
+        
+        # Crear el nuevo producto
+        new_product = Productos(
+            product_name=data['product_name'],
+            price_per_unit=price,
+            description=data.get('description', ''),
+            quantity=quantity,
+            image_url=data.get('image_url', ''),
+            user_id=user_id
+        )
+        
+        # Guardar el nuevo producto 
+        db.session.add(new_product)
+        db.session.commit()
+        
+    
+        # Devolver el producto creado
+        return jsonify({
+            "message": "Producto añadido correctamente",
+            "product": new_product.serialize()
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al añadir el producto: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
