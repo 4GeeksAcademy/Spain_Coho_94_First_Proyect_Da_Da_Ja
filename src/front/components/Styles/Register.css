@@ -51,7 +51,7 @@
   padding-top: 3px;
   left: 0;
   font-size: 1rem;
-  color: var(--text, #888);
+  color: var(--text3);
   pointer-events: none;
   transition: all 0.2s ease;
 }
@@ -70,21 +70,21 @@
   font-size: 1rem;
   border: none;
   border-radius: 6px;
-  background-color: var(--primary);
-  color: #fff;
+  background-color: var(--accent);
+  color: var(--primary);
   cursor: pointer;
   transition: background 0.3s ease;
 }
+
 .reg-btn:hover {
   background-color: var(--border2);
 }
 
 .login-link {
   font-size: 14px;
-  margin-left:  3rem;
+  margin-left: 3rem;
   color: var(--text);
 }
-
 
 /* AUTOFILL: evitar fondo por defecto del navegador */
 .reg-field input:-webkit-autofill,
@@ -100,7 +100,3 @@
   box-shadow: 0 0 0px 1000px transparent inset !important;
   -moz-text-fill-color: var(--text) !important;
 }
-
-
-
-

@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from api.models import db, User, Logo
 from flask import make_response
 from flask_cors import CORS
+from datetime import timedelta
 from flask import send_from_directory
 import secrets
 import random

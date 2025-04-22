@@ -1,352 +1,352 @@
 /* ClientList.css - Estilos para la página de listado de clientes */
 
 .client-list-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    color: var(--text);
-  }
-  
-  .client-list-title {
-    color: var(--primary);
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-    border-bottom: 2px solid var(--border);
-    padding-bottom: 10px;
-  }
-  
-  /* Sección de filtros */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--text);
+}
+
+.client-list-title {
+  color: var(--accent);
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 10px;
+}
+
+/* Sección de filtros */
+.client-list-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: var(--card-bg);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.search-container {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(66, 123, 152, 0.25);
+}
+
+.store-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.store-filter label {
+  font-weight: 500;
+}
+
+.store-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Tabla de clientes */
+.client-table-container {
+  overflow-x: auto;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow);
+  margin-bottom: 20px;
+}
+
+.client-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.client-table th,
+.client-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.client-table th {
+  background-color: var(--accent);
+  color: var(--primary);
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.client-table th:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Indicadores de ordenación */
+.sorted-asc::after {
+  content: " ↑";
+}
+
+.sorted-desc::after {
+  content: " ↓";
+}
+
+.client-table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.client-table tbody tr.active-row {
+  background-color: rgba(66, 123, 152, 0.1);
+}
+
+/* Botones de acción */
+.details-btn {
+  padding: 6px 12px;
+  background-color: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.details-btn:hover {
+  background-color: var(--accent);
+  color: var(--primary);
+  border-color: var(--accent);
+}
+
+/* Fila de detalles */
+.details-row {
+  background-color: var(--bg);
+}
+
+.client-details {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.detail-section {
+  padding: 15px;
+  background-color: var(--card-bg);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.detail-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--accent);
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 5px;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: var(--text3);
+  margin-bottom: 3px;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: var(--text);
+}
+
+.detail-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.contact-btn,
+.orders-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.contact-btn {
+  background-color: var(--accent);
+  color: var(--primary);
+  border: none;
+}
+
+.contact-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.orders-btn {
+  background-color: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.orders-btn:hover {
+  background-color: var(--bg2);
+}
+
+/* Mensaje de "no hay clientes" */
+.no-clients {
+  text-align: center;
+  padding: 40px;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.no-clients-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.no-clients h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.no-clients p {
+  margin-bottom: 20px;
+  color: var(--text3);
+}
+
+.clear-filters-btn {
+  padding: 8px 16px;
+  background-color: var(--accent);
+  color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.clear-filters-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Estadísticas */
+.client-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow);
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+/* Exportación */
+.export-section {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.export-btn {
+  padding: 10px 20px;
+  background-color: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-btn:hover {
+  background-color: var(--accent);
+  color: var(--primary);
+  border-color: var(--accent);
+}
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: var(--text3);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
   .client-list-filters {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    background-color: var(--card);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow);
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
   }
   
   .search-container {
-    flex: 1;
-    max-width: 400px;
+    max-width: 100%;
   }
   
-  .search-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background-color: var(--bg);
-    color: var(--text);
-  }
-  
-  .search-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(66, 123, 152, 0.25);
-  }
-  
-  .store-filter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .store-filter label {
-    font-weight: 500;
-  }
-  
-  .store-select {
-    padding: 8px 12px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background-color: var(--bg);
-    color: var(--text);
-  }
-  
-  /* Tabla de clientes */
-  .client-table-container {
-    overflow-x: auto;
-    background-color: var(--card);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow);
-    margin-bottom: 20px;
-  }
-  
-  .client-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px;
-  }
-  
-  .client-table th,
-  .client-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-  
-  .client-table th {
-    background-color: var(--accent);
-    color: var(--text2);
-    cursor: pointer;
-    position: relative;
-    transition: background-color 0.2s;
-  }
-  
-  .client-table th:hover {
-    background-color: var(--primary);
-  }
-  
-  /* Indicadores de ordenación */
-  .sorted-asc::after {
-    content: " ↑";
-  }
-  
-  .sorted-desc::after {
-    content: " ↓";
-  }
-  
-  .client-table tbody tr:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  
-  .client-table tbody tr.active-row {
-    background-color: rgba(66, 123, 152, 0.1);
-  }
-  
-  /* Botones de acción */
-  .details-btn {
-    padding: 6px 12px;
-    background-color: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .details-btn:hover {
-    background-color: var(--primary);
-    color: var(--text2);
-    border-color: var(--primary);
-  }
-  
-  /* Fila de detalles */
-  .details-row {
-    background-color: var(--bg);
-  }
-  
-  .client-details {
-    padding: 15px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-  }
-  
-  .detail-section {
-    padding: 15px;
-    background-color: var(--card);
-    border-radius: 6px;
-    border: 1px solid var(--border);
-  }
-  
-  .detail-section h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: var(--primary);
-    font-size: 1.1rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 5px;
-  }
-  
-  .detail-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .detail-item {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .detail-label {
-    font-weight: 500;
-    color: var(--text3);
-    margin-bottom: 3px;
-    font-size: 0.9rem;
-  }
-  
-  .detail-value {
-    color: var(--text);
-  }
-  
-  .detail-actions {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 15px;
-  }
-  
-  .contact-btn,
-  .orders-btn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-  }
-  
-  .contact-btn {
-    background-color: var(--primary);
-    color: var(--text2);
-    border: none;
-  }
-  
-  .contact-btn:hover {
-    background-color: var(--primary-hover);
-  }
-  
-  .orders-btn {
-    background-color: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  
-  .orders-btn:hover {
-    background-color: var(--bg2);
-  }
-  
-  /* Mensaje de "no hay clientes" */
-  .no-clients {
-    text-align: center;
-    padding: 40px;
-    background-color: var(--card);
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
-  
-  .no-clients-icon {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    opacity: 0.5;
-  }
-  
-  .no-clients h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: var(--text);
-  }
-  
-  .no-clients p {
-    margin-bottom: 20px;
-    color: var(--text3);
-  }
-  
-  .clear-filters-btn {
-    padding: 8px 16px;
-    background-color: var(--primary);
-    color: var(--text2);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  
-  .clear-filters-btn:hover {
-    background-color: var(--primary-hover);
-  }
-  
-  /* Estadísticas */
   .client-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
+    grid-template-columns: 1fr;
   }
   
-  .stat-card {
-    background-color: var(--card);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow);
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .stat-card h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: var(--text);
-    font-size: 1rem;
-  }
-  
-  .stat-value {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--primary);
-  }
-  
-  /* Exportación */
   .export-section {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
+    flex-direction: column;
+    align-items: center;
   }
   
   .export-btn {
-    padding: 10px 20px;
-    background-color: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
+    width: 100%;
+    max-width: 250px;
   }
-  
-  .export-btn:hover {
-    background-color: var(--primary);
-    color: var(--text2);
-    border-color: var(--primary);
-  }
-  
-  /* Loading state */
-  .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    font-size: 1.2rem;
-    color: var(--text3);
-  }
-  
-  /* Media queries */
-  @media (max-width: 768px) {
-    .client-list-filters {
-      flex-direction: column;
-      gap: 15px;
-      align-items: stretch;
-    }
-    
-    .search-container {
-      max-width: 100%;
-    }
-    
-    .client-stats {
-      grid-template-columns: 1fr;
-    }
-    
-    .export-section {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .export-btn {
-      width: 100%;
-      max-width: 250px;
-    }
-  }
+}

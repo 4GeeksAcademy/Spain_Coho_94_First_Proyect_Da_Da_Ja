@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 // URLs para los logos según el tema
 const LIGHT_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Logo.png?raw=true";
-const DARK_THEME_LOGO = "https://github.com/4GeeksAcademy/Spain_Coho_94_First_Proyect_Da_Da_Ja/blob/Dani_Dev2-(img-url)/src/front/assets/Store4Us-Dark.png?raw=true";
+
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
@@ -14,8 +14,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("access_token"));
   const [userName, setUserName] = useState("");
 
-  // Logo segun el tema actual
-  const currentLogo = theme === "light" ? LIGHT_THEME_LOGO : DARK_THEME_LOGO;
+
 
   // Función para obtener el nombre del usuario
   const getUserName = () => {
@@ -83,8 +82,7 @@ const Navbar = () => {
         <div className="nav-left">
           <div className="logo-wrapper">
             <img
-              src={currentLogo}
-              alt="Logo"
+              src={LIGHT_THEME_LOGO}
               className="logo-img"
             />
           </div>

@@ -3,7 +3,7 @@
     height: 100px;
     max-width: 200px;
     border-radius: 50%;
-    border: 2px solid white; 
+    border: 2px solid var(--text2); 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,9 +15,8 @@
     transition: all 0.3s ease-in-out;
 }
 
-
 .add-logo-text {
-    color: white;
+    color: var(--text2);
     font-size: 12px;
     font-weight: bold;
     opacity: 0.7;
@@ -41,6 +40,5 @@
     scale: 1.1;
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.4);
-    border-color: #ddd;
-  
+    border-color: var(--border);
 }

@@ -82,7 +82,7 @@ function Register() {
                     newValue: JSON.stringify(userData)
                 }));
 
-                navigate("/home"); // Cambiado de "/Settings" a "/home" para consistencia
+                navigate("/home"); 
             } else {
                 console.error("Error en respuesta:", {
                     status: response.status,

@@ -48,12 +48,11 @@
 .tab-button:hover {
   border-bottom: 3px solid transparent;
   transform: scale(1.05);
-  transition: 0.1se;
+  transition: 0.1s;
 }
 
 .tab-button.active {
   border-bottom: 3px solid var(--warning);
-
   scale: 0.9;
   transition: 0.1s;
   color: var(--warning);
@@ -105,7 +104,7 @@
 .table-container {
   width: 100%;
   overflow-x: auto;
-  background-color: var(--card);
+  background-color: var(--card-bg);
   border-radius: 6px;
   border-color: var(--border);
 }
@@ -125,7 +124,7 @@
 
 .inventory-table th {
   background-color: var(--accent);
-  color: var(--text2);
+  color: var(--primary);
   font-weight: bold;
   white-space: nowrap;
 }
@@ -207,16 +206,15 @@
 }
 
 .delete-btn {
-  background-color: rgba(147, 70, 70, 0.784);
+  background-color: var(--error);
   border-radius: 6px;
-  color: var(--text2);
-  
+  color: var(--primary);
 }
 
 .delete-btn:hover {
-  background-color: rgba(157, 67, 67, 0.811);;
+  background-color: rgba(157, 67, 67, 0.811);
   border: none;
-  color: white;
+  color: var(--primary);
   transform: scale(1.05);
 }
 
@@ -257,7 +255,7 @@
 .cancel-btn:hover {
   background-color: var(--error);
   border: none;
-  color: white;
+  color: var(--primary);
   transform: scale(1.05);
 }
 
@@ -298,7 +296,6 @@
 .upload-instructions ul {
   margin: 8px 0;
   padding-left: 20px;
-  
 }
 
 .file-selector {
@@ -308,11 +305,9 @@
 .file-input-container {
   position: relative;
   margin-bottom: 15px;
-  
 }
 
 .file-input-container input[type="file"] {
-  
   position: absolute;
   left: 0;
   top: 0;
@@ -333,8 +328,6 @@
   cursor: pointer;
   font-weight: 500;
 }
-
-
 
 .file-actions {
   margin-top: 15px;
@@ -369,17 +362,17 @@
 }
 
 .update-btn {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--accent);
+  color: var(--primary);
 }
 
 .update-btn:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--accent-hover);
 }
 
 .replace-btn {
   background-color: #6c757d;
-  color: white;
+  color: var(--primary);
 }
 
 .replace-btn:hover {
@@ -387,30 +380,32 @@
 }
 
 .download-btn {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--accent);
+  color: var(--primary);
 }
 
 .download-btn:hover {
   scale: 1.1;
   transition: all 0.01s ease;
-  background-color: var(--primary);
+  background-color: var(--accent);
 }
+
 .download-btn:active {
   transform: scale(0.8);
   transition: all 0.01s ease;
 }
 
 .template-btn {
-  background-color: #28a745;
-  color: white;
+  background-color: var(--success);
+  color: var(--primary);
 }
 
 .template-btn:hover {
   scale: 1.1;
   transition: all 0.01s ease;
-  background-color: #28a745;
+  background-color: var(--success);
 }
+
 .template-btn:active {
   transform: scale(0.8);
   transition: all 0.01s ease;
@@ -431,30 +426,30 @@
   color: var(--warning);
   scale: 1.05;
 }
+
 .template-link:active {
   transform: scale(0.9);
   transition: all 0.01s ease;
 }
 
 .action-description {
-  background-color:red;
+  background-color: var(--error);
   padding: 8px 12px;
   border-radius: 5px;
   margin-top: 12px;
   font-size: 0.85rem;
 }
+
 .action-description p {
   margin: 6px 0;
 }
 
 /* Pestaña de descarga */
-
 .download-container {
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
   border-color: var(--bg);
- 
 }
 
 .download-option {
@@ -476,14 +471,14 @@
 }
 
 .empty-notice {
-  color: #dc3545;
+  color: var(--error);
   font-style: italic;
   margin-top: 8px;
   font-size: 0.85rem;
 }
 
 .empty-state-btn {
-  background-color: var(--primary);
+  background-color: var(--accent);
   color: var(--text3);
   border: none;
   padding: 6px 12px;
@@ -496,7 +491,7 @@
 
 .empty-state-btn:hover {
   scale: 1.1;
-  background-color: var(--primary-hover);
+  background-color: var(--accent-hover);
 }
 
 /* Estados de carga y vacío */
@@ -506,11 +501,11 @@
   align-items: center;
   height: 150px;
   font-size: 1.1rem;
-  color: var(--text) !important;
+  color: var(--text);
 }
 
 .error-container {
-  color: #dc3545;
+  color: var(--error);
 }
 
 .no-products {
@@ -521,7 +516,6 @@
 }
 
 /* Estilos para la pestaña de añadir productos */
-
 .add-product-tab {
   padding: 20px;
   background-color: transparent;
@@ -650,8 +644,8 @@ textarea.form-input {
 
 .submit-btn {
   padding: 10px 20px;
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--accent);
+  color: var(--primary);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -660,7 +654,7 @@ textarea.form-input {
 }
 
 .submit-btn:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--accent-hover);
 }
 
 .submit-btn:disabled {
@@ -668,7 +662,7 @@ textarea.form-input {
   cursor: not-allowed;
 }
 
-/* Estilos para el botón de eliminar imagen */ 
+/* Estilos para el botón de eliminar imagen */
 .input-with-clear {
   position: relative;
   display: flex;
@@ -758,7 +752,6 @@ textarea.form-input {
   background: transparent;
   padding: 10px;
   border-radius: 6px;
-
 }
 
 .preview-img {
@@ -767,7 +760,6 @@ textarea.form-input {
   border-radius: 4px;
   object-fit: contain;
 }
-
 
 /* Responsive */
 @media (max-width: 992px) {
@@ -789,7 +781,6 @@ textarea.form-input {
     padding: 20px;
   }
 }
-
 
 @media (max-width: 900px) {
   .btn-group {
@@ -872,6 +863,19 @@ textarea.form-input {
     width: 100%;
     padding: 8px 16px;
   }
+  
+  .remove-preview-btn {
+    font-size: 0.85rem;
+    padding: 2px 6px;
+  }
+  
+  .preview-container {
+    padding: 8px;
+  }
+  
+  .clear-upload-btn {
+    right: -25px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -946,23 +950,7 @@ textarea.form-input {
   .preview-img {
     max-width: 100%;
   }
-}
-@media (max-width: 768px) {
-  .remove-preview-btn {
-    font-size: 0.85rem;
-    padding: 2px 6px;
-  }
   
-  .preview-container {
-    padding: 8px;
-  }
-  
-  .clear-upload-btn {
-    right: -25px;
-  }
-}
-
-@media (max-width: 576px) {
   .preview-header {
     flex-direction: column;
     align-items: flex-start;
